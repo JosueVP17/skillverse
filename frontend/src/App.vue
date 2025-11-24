@@ -1,7 +1,9 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
+<template>
+<MyComponent />
+</template>
 
-<template></template>
+<script setup>
+import MyComponent from './components/MyComponent.vue'
+</script>
 
 <style scoped></style>
