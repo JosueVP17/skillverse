@@ -100,21 +100,6 @@
             ></v-text-field>
         </div>
 
-        <div class="mb-6">
-            <v-checkbox 
-                v-model="form.acceptTerms" 
-                color="teal-lighten-1"
-                hide-details
-            >
-                <template v-slot:label>
-                    <span class="text-body-2">
-                        Acepto los
-                        <a href="#" class="text-teal-lighten-1 text-decoration-none">Términos y Condiciones</a>
-                    </span>
-                </template>
-            </v-checkbox>
-        </div>
-
         <v-btn 
             type="submit" 
             block 
@@ -167,8 +152,7 @@ const form = ref({
     birthdate: '',
     specialization: '',
     password: '',
-    confirmPassword: '',
-    acceptTerms: false
+    confirmPassword: ''
 })
 
 const showPassword = ref(false)
@@ -199,11 +183,6 @@ const calculatedAge = computed(() => {
 const handleTeacherRegister = async () => {
     if (form.value.password !== form.value.confirmPassword) {
         console.error('Las contraseñas no coinciden')
-        return
-    }
-
-    if (!form.value.acceptTerms) {
-        console.error('Debe aceptar los términos y condiciones')
         return
     }
 
