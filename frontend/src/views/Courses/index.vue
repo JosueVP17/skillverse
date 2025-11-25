@@ -1,9 +1,10 @@
 <template>
-    <p>contenido de la pagina de home</p>
+    <div>
+        <p>contenido para cursos</p>
+    </div>
 </template>
 
 <script setup>
-// IMPORTS
 import { ref, onMounted } from 'vue'
 
 // STORES
@@ -12,8 +13,12 @@ const uiStore = useUIStore()
 
 // HOOKS
 onMounted(() => {
-    uiStore.setTitlePage('Home');
-    uiStore.setTabPage('Home');
+    uiStore.setTitlePage('Courses');
+    uiStore.setTabPage('Courses');
 })
 
 </script>
+
+<style lang="scss" scoped>
+
+</style>
