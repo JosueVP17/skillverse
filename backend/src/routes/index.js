@@ -1,5 +1,6 @@
 import express from 'express'
 import ProfesorRoutes from './profesor.routes.js'
+import UsuarioRoutes from './usuario.routes.js'
 
 const router = express.Router()
 
@@ -11,5 +12,6 @@ router.get('/', (req, res) => {
 })
 
 router.use('/profesores', ProfesorRoutes)
+router.use('/usuarios', UsuarioRoutes) 
 
 export default router
