@@ -67,12 +67,16 @@
     }
 
     .navbar {
+        position: sticky;
+        top: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 0 80px;
         width: 100%;
+        background-color: white;
         box-shadow: 0px 4px 8px rgba(0,0,0,0.25);
+        z-index: 2;
     }
 
     .logo {
@@ -153,5 +157,6 @@
         color: rgb(184, 184, 202);
         margin: 0 15px;
         font-size: 0.9em;
+        margin-bottom: 40px;
     }
 </style>
