@@ -239,8 +239,8 @@ const validateBirthdate = (birthdate) => {
         return 'La fecha de nacimiento no es válida'
     }
     
-    if (age < 18) {
-        return 'Debes tener al menos 18 años para registrarte'
+    if (age < 13) {
+        return 'Debes tener al menos 13 años para registrarte'
     }
     
     return null
