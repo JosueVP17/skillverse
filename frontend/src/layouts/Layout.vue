@@ -5,7 +5,7 @@
             <div class="navigation">
                 <v-btn class="nav-btn" density="comfortable" variant="plain">Inicio</v-btn>
                 <v-btn class="nav-btn" density="comfortable" variant="plain">Cursos</v-btn>
-                <v-btn class="nav-btn" rounded="xl" density="comfortable" variant="tonal">Ingresar</v-btn>
+                <v-btn class="nav-btn" rounded="xl" density="comfortable" variant="tonal" @click="$router.push('/auth')">Ingresar</v-btn>
             </div>
         </div>
 
