@@ -54,14 +54,20 @@ export default {
             }
         }
 
+        // INCLUIR EMAIL EN EL TOKEN
         const token = jwt.sign({
-            id: usuario.id, nombre: usuario.id, apaterno: usuario.apaterno },
+            id: usuario.id, 
+            nombre: usuario.nombre, 
+            apaterno: usuario.apaterno,
+            email: usuario.email,
+            rol: 'estudiante'  // Para diferenciarlo del profesor
+        },
             process.env.JWT_SECRET,
             {expiresIn: TOKEN_EXP}
         )
 
         await UsuarioRepository.update(usuario.id, { activeToken: token})
-        return {token}
+        return token
     },
 
     async logout(id){
