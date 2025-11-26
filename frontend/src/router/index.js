@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'auth',
-      component: () => import('@/views/Auth/Layout/Layout.vue'),
+      component: () => import('@/views/Auth/Layout/AuthLayout.vue'),
       children: [
         {
           path: '',
@@ -34,12 +34,17 @@ const router = createRouter({
         {
           path: 'login',
           name: 'login',
-          component: () => import('@/views/Auth/Login/index.vue')
+          component: () => import('@/views/Auth/LoginForm.vue')
         },
         {
           path: 'register',
           name: 'register',
-          component: () => import('@/views/Auth/Register/index.vue')
+          component: () => import('@/views/Auth/RegisterForm.vue')
+        },
+        {
+          path: 'teacher-register',
+          name: 'teacher-register',
+          component: () => import('@/views/Auth/TeacherRegisterForm.vue')
         }
       ]
     }
