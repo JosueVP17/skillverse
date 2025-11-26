@@ -160,7 +160,7 @@
         height: 600px;
         position: absolute;
         left: 0;
-        top: 80px;
+        top: 71px;
         z-index: 0;
         background-image: url("@/assets/HeaderBack.png");
         background-size: 100% 100%;

@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { apiPostFetch } from '@/utils/misc'
+import { useSessionStore } from './session'
 
 export const useAuthStore = defineStore('auth', () => {
-  // Estado
-  const user = ref(null)
-  const isAuthenticated = ref(false)
   const loading = ref(false)
-  
+
   // Configuración dinámica para las páginas de auth
   const authConfig = ref({
     login: {
@@ -37,32 +36,44 @@ export const useAuthStore = defineStore('auth', () => {
   // Actions
   const login = async (credentials) => {
     loading.value = true
+    const sessionStore = useSessionStore()
+    
     try {
-      // TODO: Llamar API de login
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        user.value = data.user
-        isAuthenticated.value = true
-        localStorage.setItem('token', data.token)
-        
-        if (credentials.rememberMe) {
-          localStorage.setItem('rememberMe', 'true')
+      // INTENTAR LOGIN ESTUDIANTE PRIMERO
+      try {
+        const data = await apiPostFetch('/usuarios/login', {}, {
+          email: credentials.email,
+          password: credentials.password
+        })
+
+        if (data.ok && data.token) {
+          sessionStore.setSession(data.token)
+          return { success: true, userType: 'student' }
         }
-        
-        return { success: true }
-      } else {
-        return { success: false, error: data.message }
+      } catch (error) {
+        console.log('No es estudiante, intentando como profesor...')
       }
+
+      // INTENTAR LOGIN PROFESOR
+      try {
+        const dataTeacher = await apiPostFetch('/profesores/login', {}, {
+          email: credentials.email,
+          password: credentials.password
+        })
+
+        if (dataTeacher.ok && dataTeacher.token) {
+          sessionStore.setSession(dataTeacher.token)
+          return { success: true, userType: 'teacher' }
+        }
+      } catch (error) {
+        console.log('Tampoco es profesor')
+      }
+
+      return { success: false, error: "Usuario y/o contraseña no válidos" }
+
     } catch (error) {
       console.error('Login error:', error)
-      return { success: false, error: 'Network error' }
+      return { success: false, error: 'Error de conexión' }
     } finally {
       loading.value = false
     }
@@ -71,36 +82,88 @@ export const useAuthStore = defineStore('auth', () => {
   const register = async (userData) => {
     loading.value = true
     try {
-      // TODO: Llamar API de registro
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-      })
+      let endpoint = '/usuarios/register'
+
+      // Separar nombre completo en nombre, apellido paterno y materno
+      const nameParts = userData.fullName.trim().split(' ')
+      const nombre = nameParts[0] || ''
+      const apaterno = nameParts[1] || ''
+      const amaterno = nameParts.slice(2).join(' ') || ''
+
+      // Preparar datos base
+      const registerData = {
+        nombre,
+        apaterno,
+        amaterno,
+        edad: userData.age,
+        email: userData.email,
+        password: userData.password
+      }
+
+      // Si es profesor, cambiar endpoint y agregar campos adicionales
+      if (userData.role === 'teacher') {
+        endpoint = '/profesores/register'
+        registerData.ocupacion = userData.specialization
+        registerData.foto = ''
+        
+        // Si no hay apellido materno, enviarlo vacío explícitamente
+        if (!amaterno) {
+          registerData.amaterno = ''
+        }
+      }
+
+      console.log('Datos de registro:', registerData)
+      console.log('Endpoint:', endpoint)
+
+      const data = await apiPostFetch(endpoint, {}, registerData)
       
-      const data = await response.json()
+      console.log('Respuesta del registro:', data)
       
-      if (response.ok) {
-        user.value = data.user
-        isAuthenticated.value = true
-        localStorage.setItem('token', data.token)
-        return { success: true }
+      if (data.ok && data.result) {
+        // Login automático después del registro
+        const loginResult = await login({
+          email: userData.email,
+          password: userData.password
+        })
+        
+        return loginResult
       } else {
-        return { success: false, error: data.message }
+        return { success: false, error: data.message || 'Error en el registro' }
       }
     } catch (error) {
       console.error('Register error:', error)
-      return { success: false, error: 'Network error' }
+      
+      // Manejar errores específicos del backend
+      if (error.message) {
+        if (error.message.includes('Ya existe')) {
+          return { success: false, error: 'Este correo electrónico ya está registrado' }
+        }
+        return { success: false, error: error.message }
+      }
+      
+      return { success: false, error: 'Error de red al registrar' }
     } finally {
       loading.value = false
     }
   }
 
-  const logout = () => {
-    user.value = null
-    isAuthenticated.value = false
-    localStorage.removeItem('token')
-    localStorage.removeItem('rememberMe')
+  const logout = async () => {
+    const sessionStore = useSessionStore()
+    
+    try {
+      const token = sessionStore.token
+      const userId = sessionStore.userId
+      const isTeacher = sessionStore.isTeacher
+      
+      if (token && userId) {
+        const endpoint = isTeacher ? '/profesores/logout' : '/usuarios/logout'
+        await apiPostFetch(endpoint, { Authorization: `Bearer ${token}` }, { id: userId })
+      }
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      sessionStore.clearSession()
+    }
   }
 
   const setAuthConfig = (page, config) => {
@@ -108,8 +171,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    user,
-    isAuthenticated,
     loading,
     authConfig,
     getAuthConfig,
