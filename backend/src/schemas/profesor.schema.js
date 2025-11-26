@@ -7,14 +7,14 @@ const passwordValidation = new RegExp(
 const baseProfesorSchema = {
     nombre: z.string().min(1, 'El nombre es requerido.'),
     apaterno: z.string().min(1, 'El apellido paterno es requerido.'),
-    amaterno: z.string().min(1, 'El apellido materno es requerido.'),
+    amaterno: z.string().optional().default(''), // Hacerlo opcional
     edad: z
     .int('La edad debe ser un número entero.')
     .positive('La edad debe ser un número positivo')
     .min(18, 'Debes ser mayor de edad.')
     .max(100, 'Ingrese una edad válida.'),
     ocupacion: z.string().min(1, 'La ocupación es requerida.'),
-    foto: z.string().min(1, 'La foto es requerida.'),
+    foto: z.string().optional().default(''), // Hacerlo opcional
     email: z.email("Email inválido."),
     password: z
     .string()
@@ -38,7 +38,7 @@ export const loginProfesorSchema = z.object({
 export const updateProfesorSchema = z.object({
     nombre: z.string().min(1, 'El nombre es requerido.').optional(),
     apaterno: z.string().min(1, 'El apellido paterno es requerido.').optional(),
-    amaterno: z.string().min(1, 'El apellido materno es requerido.').optional(),
+    amaterno: z.string().optional(),
     edad: z
     .int('La edad debe ser un número entero.')
     .positive('La edad debe ser un número positivo')
@@ -46,7 +46,7 @@ export const updateProfesorSchema = z.object({
     .max(100, 'Ingrese una edad válida.')
     .optional(),
     ocupacion: z.string().min(1, 'La ocupación es requerida.').optional(),
-    foto: z.string().min(1, 'La foto es requerida.').optional(),
+    foto: z.string().optional(),
     email: z.email("Email inválido.").optional(),
     password: z
     .string()
