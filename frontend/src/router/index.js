@@ -12,14 +12,19 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: () => import('@/views/Home/index.vue')
+          component: () => import('@/views/Home/index.vue'),
         },
         {
           path: 'courses',
           name: 'courses',
-          component: () => import('@/views/Courses/index.vue')
-        }
-      ]
+          component: () => import('@/views/Courses/index.vue'),
+        },
+        {
+          path: 'courses/:id',
+          name: 'CourseDetail',
+          component: () => import('@/views/Courses/CourseDetail.vue'),
+        },
+      ],
     },
     // Seccion Auth (Login y Register)
     {
@@ -29,25 +34,25 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: { name: 'login' }
+          redirect: { name: 'login' },
         },
         {
           path: 'login',
           name: 'login',
-          component: () => import('@/views/Auth/LoginForm.vue')
+          component: () => import('@/views/Auth/LoginForm.vue'),
         },
         {
           path: 'register',
           name: 'register',
-          component: () => import('@/views/Auth/RegisterForm.vue')
+          component: () => import('@/views/Auth/RegisterForm.vue'),
         },
         {
           path: 'teacher-register',
           name: 'teacher-register',
-          component: () => import('@/views/Auth/TeacherRegisterForm.vue')
-        }
-      ]
-    }
+          component: () => import('@/views/Auth/TeacherRegisterForm.vue'),
+        },
+      ],
+    },
     // TODO: Sección de lecciones
   ],
 })
