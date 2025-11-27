@@ -5,6 +5,10 @@ const COLLECTION = 'cursos'
 export default {
     async create(id, data) {
         await db.collection(COLLECTION).doc(id).set(data)
+        await db.collection('profesores').doc(data.profesor).update({
+            cursos: admin.firestore.FieldValue.arrayUnion(id)
+        })
+        
         return { id }
     },
     async update(id, data) {
@@ -13,6 +17,9 @@ export default {
     },
     async delete(id) {
         await db.collection(COLLECTION).doc(id).delete()
+        await db.collection('profesores').doc(data.profesor).update({
+            cursos: admin.firestore.FieldValue.arrayRemove(id)
+        })
         return { id }
     },
     async findById(id) {
