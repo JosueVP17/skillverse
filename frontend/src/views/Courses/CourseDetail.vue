@@ -47,6 +47,20 @@
               </svg>
               {{ course.duracion || 'N/A' }} horas
             </span>
+            <span class="meta-item" :class="`complexity-${course.complejidad}`">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
+              {{ course.complejidad || 'Principiante' }}
+            </span>
           </div>
 
           <!-- Price & Purchase -->
@@ -363,6 +377,30 @@ const copyLink = () => {
 
 .meta-item svg {
   color: #4a90e2;
+}
+
+.meta-item.complexity-principiante {
+  color: #2e7d32;
+}
+
+.meta-item.complexity-principiante svg {
+  color: #2e7d32;
+}
+
+.meta-item.complexity-intermedio {
+  color: #f57c00;
+}
+
+.meta-item.complexity-intermedio svg {
+  color: #f57c00;
+}
+
+.meta-item.complexity-avanzado {
+  color: #c62828;
+}
+
+.meta-item.complexity-avanzado svg {
+  color: #c62828;
 }
 
 /* Price Section */
