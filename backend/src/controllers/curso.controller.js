@@ -1,6 +1,14 @@
 import CursoService from '../services/curso.service.js'
 
 export default {
+    async getById(req, res) {
+        try {
+            const curso = await CursoService.getCursoById(req.params.id)
+            res.status(200).json({ ok: true, curso })
+        } catch (e) {
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
     async create(req, res) {
         try {
             const profId = req.profesor.id
@@ -26,20 +34,28 @@ export default {
             res.status(400).json({ok: false, message: e.message })
         }
     },
-    async addLectureToProfesor(req, res){
+    async addLeccion(req, res){
         try{
-            const result = await CursoService.addLectureToProfesor(req.params.id, req.body.lectId)
-            res.status(200).json({ ok: true, result })
+            const result = await CursoService.addLeccion(req.params.id, req.body.leccion)
+            res.status(201).json({ ok: true, result })
         }catch(e){
-            res.status(400).json({ ok: false, message: e.message})
+            res.status(400).json({ ok: false, message: e.message })
         }
     },
-    async removeLectureFromProfesor(req, res){
+    async removeLeccion(req, res){
         try{
-            const result = await CursoService.removeLectureFromProfesor(req.params.id, req.body.lectId)
-            res.status(200).json({ ok: true, result })
+            const result = await CursoService.removeLeccion(req.params.id, leccionIndex)
+            res.status(201).json({ ok: true, result })
         }catch(e){
-            res.status(400).json({ ok: false, message: e.message})
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+    async updateLeccion(req, res){
+        try{
+            const result = await CursoService.updateLeccion(req.params.id, leccionIndex, req.body)
+            res.status(201).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message })
         }
     }
 }

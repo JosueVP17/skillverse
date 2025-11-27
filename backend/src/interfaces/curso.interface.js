@@ -1,6 +1,6 @@
 export default class CursoInterface {
     constructor({
-        nombre, descripcion, categoria, duracion, precio, complejidad, profesor, img}) {
+        nombre, descripcion, categoria, duracion, precio, complejidad, profesor, img, lecciones}) {
             this.nombre = nombre
             this.descripcion = descripcion
             this.categoria = categoria
@@ -9,5 +9,6 @@ export default class CursoInterface {
             this.complejidad = complejidad
             this.profesor = profesor
             this.img = img
+            this.lecciones = lecciones || []
     }
 }

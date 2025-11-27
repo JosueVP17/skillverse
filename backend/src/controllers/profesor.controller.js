@@ -1,6 +1,15 @@
 import ProfesorService from "../services/profesor.service.js"
 
 export default {
+    async getProfesorById(req, res) {
+        try {
+            const profesor = await ProfesorService.getById(req.params.id)
+            res.status(200).json({ ok: true, profesor })
+        } catch (e) {
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+
     async register(req, res) {
         try {
             const result = await ProfesorService.registerProfesor(req.body)

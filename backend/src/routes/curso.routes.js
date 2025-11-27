@@ -2,10 +2,15 @@ import express from 'express'
 import CursoController from '../controllers/curso.controller.js'
 import { verifyToken } from '../middleware/profesor.middleware.js'
 import { validate } from '../middleware/validateCurso.middleware.js'
-import { idCursoSchema, createCursoSchema, updateCursoSchema } from '../schemas/curso.schema.js'
+import { idCursoSchema, createCursoSchema, updateCursoSchema, addLeccionSchema } from '../schemas/curso.schema.js'
 
 const CursoRoutes = express.Router()
 
+CursoRoutes.get(
+    '/:id',
+    validate(idCursoSchema, 'params'),
+    CursoController.getById
+)
 CursoRoutes.post(
     '/create',
     verifyToken,
@@ -24,6 +29,25 @@ CursoRoutes.delete(
     validate(idCursoSchema, 'params'),
     verifyToken,
     CursoController.delete
+)
+CursoRoutes.post(
+    '/:id/lecciones',
+    validate(idCursoSchema, 'params'),
+    validate(addLeccionSchema),
+    verifyToken,
+    CursoController.addLeccion
+)
+CursoRoutes.delete(
+    '/:id/lecciones/:index',
+    validate(idCursoSchema, 'params'),
+    verifyToken,
+    CursoController.removeLeccion
+)
+CursoRoutes.put(
+    '/:id/lecciones/:index',
+    validate(idCursoSchema, 'params'),
+    verifyToken,
+    CursoController.updateLeccion
 )
 
 export default CursoRoutes

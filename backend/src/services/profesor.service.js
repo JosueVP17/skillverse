@@ -10,6 +10,11 @@ import ProfesorRepository from '../repositories/profesor.repository.js'
 const TOKEN_EXP = '2h'
 
 export default {
+    async getById(id) {
+        const profesor = await ProfesorRepository.findById(id)
+        return profesor
+    },
+
     async registerProfesor(payload) {
         const { email, password, ...rest } = payload
 
