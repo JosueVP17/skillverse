@@ -2,7 +2,7 @@ import express from 'express'
 import CursoController from '../controllers/curso.controller.js'
 import { verifyToken } from '../middleware/profesor.middleware.js'
 import { validate } from '../middleware/validateCurso.middleware.js'
-import { idCursoSchema, createCursoSchema, updateCursoSchema, addLeccionSchema } from '../schemas/curso.schema.js'
+import { idCursoSchema, createCursoSchema, updateCursoSchema, addLeccionSchema, idCursoWithIndexSchema, updateLeccionSchema } from '../schemas/curso.schema.js'
 
 const CursoRoutes = express.Router()
 
@@ -39,13 +39,14 @@ CursoRoutes.post(
 )
 CursoRoutes.delete(
     '/:id/lecciones/:index',
-    validate(idCursoSchema, 'params'),
+    validate(idCursoWithIndexSchema, 'params'),
     verifyToken,
     CursoController.removeLeccion
 )
 CursoRoutes.put(
     '/:id/lecciones/:index',
-    validate(idCursoSchema, 'params'),
+    validate(idCursoWithIndexSchema, 'params'),
+    validate(updateLeccionSchema),
     verifyToken,
     CursoController.updateLeccion
 )

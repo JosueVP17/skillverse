@@ -36,7 +36,7 @@ export default {
     },
     async addLeccion(req, res){
         try{
-            const result = await CursoService.addLeccion(req.params.id, req.body.leccion)
+            const result = await CursoService.addLeccion(req.params.id, req.body)
             res.status(201).json({ ok: true, result })
         }catch(e){
             res.status(400).json({ ok: false, message: e.message })
@@ -44,7 +44,7 @@ export default {
     },
     async removeLeccion(req, res){
         try{
-            const result = await CursoService.removeLeccion(req.params.id, leccionIndex)
+            const result = await CursoService.removeLeccion(req.params.id, parseInt(req.params.index))
             res.status(201).json({ ok: true, result })
         }catch(e){
             res.status(400).json({ ok: false, message: e.message })
@@ -52,7 +52,7 @@ export default {
     },
     async updateLeccion(req, res){
         try{
-            const result = await CursoService.updateLeccion(req.params.id, leccionIndex, req.body)
+            const result = await CursoService.updateLeccion(req.params.id, parseInt(req.params.index), req.body)
             res.status(201).json({ ok: true, result })
         }catch(e){
             res.status(400).json({ ok: false, message: e.message })

@@ -1,4 +1,4 @@
-import { db } from '../config/firebase.js'
+import { db, admin } from '../config/firebase.js'
 
 const COLLECTION = 'cursos'
 

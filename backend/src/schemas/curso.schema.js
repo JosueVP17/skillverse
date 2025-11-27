@@ -41,6 +41,20 @@ export const idCursoSchema = z.object({
     id: z.uuid()
 })
 
-export const addLeccionSchema = z.object({
-    leccion: z.object({ ...baseLeccionSchema }).required()
+export const addLeccionSchema = z.object({ ...baseLeccionSchema })
+
+export const leccionIndexSchema = z.object({
+    index: z.string().regex(/^\d+$/, 'El índice debe ser un número').transform(Number)
+})
+
+export const idCursoWithIndexSchema = z.object({
+    id: z.uuid(),
+    index: z.string().regex(/^\d+$/, 'El índice debe ser un número').transform(Number)
+})
+
+export const updateLeccionSchema = z.object({
+    imagen: z.url('La imagen debe ser una URL válida.').optional(),
+    titulo: z.string().min(1, 'El título es requerido.').optional(),
+    texto: z.string().min(1, 'El texto es requerido.').optional(),
+    video: z.url('El video debe ser una URL válida.').optional()
 })
