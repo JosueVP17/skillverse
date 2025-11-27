@@ -141,7 +141,7 @@
             <div v-for="(lesson, index) in lessons" :key="index" class="lesson-item">
               <span class="lesson-number">{{ index + 1 }}</span>
               <div class="lesson-info">
-                <h3>{{ lesson }}</h3>
+                <h3>{{ lesson.titulo }}</h3>
               </div>
             </div>
           </div>
@@ -235,18 +235,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { db } from '@/config/firebase.js'
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore'
 
 // STORES
 import { useUIStore } from '@/stores/ui'
 const uiStore = useUIStore()
 
-// HOOKS
-onMounted(() => {
-  uiStore.setTitlePage('Courses')
-  uiStore.setTabPage('Courses')
-})
+// FETCH HELPERS
+import { getCurso, getProfesor } from '@/utils/fetchCourseInfo'
 
 const route = useRoute()
 const courseId = route.params.id
@@ -256,18 +251,21 @@ const lessons = ref([])
 const profesor = ref(null)
 
 onMounted(async () => {
+  uiStore.setTitlePage('Courses')
+  uiStore.setTabPage('Courses')
+
   // Cargar información del curso
-  const courseRef = doc(db, 'cursos', courseId)
-  const snap = await getDoc(courseRef)
-  if (snap.exists()) course.value = snap.data()
+  const cursoData = await getCurso(courseId)
 
-  // Cargar lecciones
-  lessons.value = course.value.lecciones
+  if (cursoData) {
+    course.value = cursoData
 
-  // Cargar información del profesor
-  const profesorRef = doc(db, 'profesores', course.value.profesor)
-  const profesorSnap = await getDoc(profesorRef)
-  profesor.value = profesorSnap.data()
+    // Cargar lecciones
+    lessons.value = cursoData.lecciones || []
+
+    // Cargar información del profesor
+    profesor.value = await getProfesor(cursoData.profesor)
+  }
 })
 
 // Methods
