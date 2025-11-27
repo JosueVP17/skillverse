@@ -1,10 +1,14 @@
-import { db } from '../config/firebase.js'
+import { db, admin } from '../config/firebase.js'
 
 const COLLECTION = 'cursos'
 
 export default {
     async create(id, data) {
-        const ref = await db.collection(COLLECTION).doc(id).set(data)
+        await db.collection(COLLECTION).doc(id).set(data)
+        await db.collection('profesores').doc(data.profesor).update({
+            cursos: admin.firestore.FieldValue.arrayUnion(id)
+        })
+        
         return { id }
     },
     async update(id, data) {
@@ -13,22 +17,47 @@ export default {
     },
     async delete(id) {
         await db.collection(COLLECTION).doc(id).delete()
+        await db.collection('profesores').doc(data.profesor).update({
+            cursos: admin.firestore.FieldValue.arrayRemove(id)
+        })
         return { id }
     },
     async findById(id) {
         const doc = await db.collection(COLLECTION).doc(id).get()
         return doc.exists ? { id: doc.id, ...doc.data() } : null
     },
-    async addLecture(id, lectId) {
+    async addLeccion(id, leccion) {
         await db.collection(COLLECTION).doc(id).update({
-            lecciones: admin.firestore.FieldValue.arrayUnion(lectId)
+            lecciones: admin.firestore.FieldValue.arrayUnion(leccion)
         })
         return { id }
     },
-    async removeLecture(id, lectId) {
-        await db.collection(COLLECTION).doc(id).update({
-            cursos: admin.firestore.FieldValue.arrayRemove(lectId)
-        })
+    async removeLeccion(id, leccionIndex) {
+        const curso = await this.findById(id)
+        if (!curso || !curso.lecciones) {
+            throw new Error('Curso o lecciones no encontradas')
+        }
+
+        const lecciones = curso.lecciones || []
+        lecciones.splice(leccionIndex, 1)
+
+        await db.collection(COLLECTION).doc(id).update({ lecciones })
+        return { id }
+    },
+    async updateLeccion(id, leccionIndex, leccionData) {
+        const curso = await this.findById(id)
+        if (!curso || !curso.lecciones) {
+            throw new Error('Curso o lecciones no encontradas')
+        }
+
+        const lecciones = curso.lecciones || []
+        if(leccionIndex < 0 || leccionIndex >= lecciones.length) {
+            throw new Error('Índice de lección inválido')
+        }
+
+        lecciones[leccionIndex] = { ...lecciones[leccionIndex], ...leccionData }
+
+        await db.collection(COLLECTION).doc(id).update({ lecciones })
         return { id }
     }
 }
