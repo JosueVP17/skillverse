@@ -107,12 +107,6 @@
                         @click="goToMyCourses"
                     ></v-list-item>
 
-                    <v-list-item
-                        prepend-icon="mdi-cog"
-                        title="Configuración"
-                        @click="goToSettings"
-                    ></v-list-item>
-
                     <v-divider></v-divider>
 
                     <v-list-item
@@ -142,22 +136,13 @@ const goToProfile = () => {
 }
 
 const goToMyCourses = () => {
-    if (sessionStore.isTeacher) {
-        router.push({ name: 'teacher-courses' })
-    } else {
-        router.push({ name: 'my-courses' })
-    }
+    router.push({ name: 'teacher-courses' })
 }
 
-const goToSettings = () => {
-    router.push({ name: 'settings' })
-}
-
-// Cerrar sesión
 const handleLogout = async () => {
     try {
         await authStore.logout()
-        router.push({ name: 'home' })
+        router.push({ name: 'login' })
     } catch (error) {
         console.error('Error al cerrar sesión:', error)
     }
