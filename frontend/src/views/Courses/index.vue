@@ -9,30 +9,35 @@
     </div>
 
     <div class="course-list">
-        <CourseCard
-            v-for="curso in cursosPaginados"
-            :key="curso.id"
-            :id="curso.id"
-            :title="curso.nombre"
-            :category="curso.categoria"
-            :complexity="curso.complejidad"
-            :duration="curso.duracion"
-            :imageCourse="curso.img"
-            :description="curso.descripcion"
-            :imageProfesor="curso.profesor.img"
-            :professor-name="curso.profesor.nombre"
-            :price = "curso.precio"
-            @course-click="handleCourseClick"
-            />
+        <div v-if="isLoading" class="loading-message">
+            <p>Cargando cursos...</p>
+        </div>
+        <template v-else>
+            <CourseCard
+                v-for="curso in cursosPaginados"
+                :key="curso.id"
+                :id="curso.id"
+                :title="curso.nombre"
+                :category="curso.categoria"
+                :complexity="curso.complejidad"
+                :duration="curso.duracion"
+                :imageCourse="curso.img"
+                :description="curso.descripcion"
+                :imageProfesor="curso.profesor.img"
+                :professor-name="curso.profesor.nombre"
+                :price = "curso.precio"
+                @course-click="handleCourseClick"
+                />
+        </template>
     </div>
 
     <Pagination
         :page="currentPage"
         :per-page="perPage"
         :total="cursosFiltrados.length"
+        :is-loading="isLoading"
         @update:page="currentPage = $event"
     />
-
 
 </template>
 
@@ -50,6 +55,7 @@ const uiStore = useUIStore()
 const router = useRouter()
 
 const cursos = ref([])
+const isLoading = ref(true)
 
 // HOOKS
 onMounted(() => {
@@ -60,12 +66,15 @@ onMounted(() => {
 //HOOK para cargar cursos del backend
 onMounted(async () =>{
 try{
+    isLoading.value = true
     const res = await fetch('http://localhost:5050/api/cursos');
     const data = await res.json();
     cursos.value = data.result;
 
 }catch(e){
     console.error(e);
+}finally{
+    isLoading.value = false
 }
 })
 

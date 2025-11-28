@@ -1,13 +1,13 @@
 <template>
   <div class="pagination">
     <button v-if="total > 0 && page > 1" @click="prev">Anterior</button>
-    <span v-if="total === 0">
+    <span v-if="total === 0 && !isLoading">
         No hay elementos disponibles 
         <i class="mdi mdi-emoticon-sad-outline"></i>
 
     </span>
 
-    <span v-else>Página {{ page }} de {{ totalPages }}</span>
+    <span v-else-if="total > 0">Página {{ page }} de {{ totalPages }}</span>
 
     <button v-if="total > 0 && page < totalPages" @click="next">Siguiente</button>
   </div>
@@ -19,12 +19,13 @@ import { computed } from 'vue';
 const props = defineProps({
   page: { type: Number, required: true },
   perPage: { type: Number, default: 10 },
-  total: { type: Number, required: true }
+  total: { type: Number, required: true },
+  isLoading: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(['update:page']);
 
-const totalPages = computed(() => Math.max(1, Math.ceil(props.total / props.perPage)));
+const totalPages = computed(() => Math.ceil(props.total / props.perPage) || 1);
 
 const prev = () => {
   if (props.page > 1) emit('update:page', props.page - 1);

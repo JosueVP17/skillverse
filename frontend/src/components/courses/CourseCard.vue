@@ -41,12 +41,12 @@
         title: String,
         category: String,
         complexity: String,
-        duration: String,
+        duration: [ String, Number ],
         imageCourse: String,
         description: String,
         imageProfesor: String,
         professorName: String,
-        price: String
+        price: [ String, Number ],
     });
 
     defineEmits(['course-click']);
