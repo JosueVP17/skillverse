@@ -445,31 +445,228 @@ const viewCourse = (cursoId) => {
   background: rgba(73, 187, 189, 0.85);
 }
 
+@media (max-width: 1024px) {
+  .teacher-courses-page {
+    padding: 30px 0;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .header-section h1 {
+    font-size: 28px;
+  }
+
+  .courses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .course-content h3 {
+    font-size: 16px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+}
+
 @media (max-width: 768px) {
+  .teacher-courses-page {
+    padding: 20px 0;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+
   .header-section {
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     text-align: center;
+    margin-bottom: 30px;
   }
 
   .header-section h1 {
     font-size: 24px;
+    margin: 0;
   }
 
   .btn-create {
     width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
   }
 
-  .no-courses {
-    padding: 60px 20px;
-  }
-
+  .no-courses,
   .student-courses {
     padding: 60px 20px;
+    border-radius: 10px;
+  }
+
+  .no-courses p,
+  .student-courses p {
+    font-size: 16px;
+    margin: 16px 0;
+  }
+
+  .courses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
+  .course-card {
+    border-radius: 10px;
+  }
+
+  .course-image {
+    height: 160px;
+  }
+
+  .course-content {
+    padding: 16px;
+  }
+
+  .course-content h3 {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+  }
+
+  .description {
+    font-size: 12px;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+  }
+
+  .course-meta {
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 11px;
+  }
+
+  .price,
+  .duration,
+  .complexity {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .course-actions {
+    gap: 8px;
+  }
+
+  .btn-edit,
+  .btn-delete,
+  .btn-view {
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+
+  .btn-browse {
+    padding: 10px 16px;
+    font-size: 14px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .teacher-courses-page {
+    padding: 15px 0;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .header-section {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .header-section h1 {
+    font-size: 20px;
+  }
+
+  .btn-create {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .no-courses,
+  .student-courses {
+    padding: 40px 16px;
+    border-radius: 8px;
+  }
+
+  .no-courses p,
+  .student-courses p {
+    font-size: 14px;
+    margin: 12px 0;
   }
 
   .courses-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .course-image {
+    height: 140px;
+  }
+
+  .course-content {
+    padding: 12px;
+  }
+
+  .course-content h3 {
+    font-size: 13px;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+  }
+
+  .description {
+    font-size: 11px;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .course-meta {
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .price,
+  .duration,
+  .complexity {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+
+  .course-actions {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .btn-edit,
+  .btn-delete,
+  .btn-view {
+    flex: 1;
+    min-width: 45%;
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .btn-browse {
+    padding: 8px 12px;
+    font-size: 12px;
+    width: 100%;
   }
 }
 </style>

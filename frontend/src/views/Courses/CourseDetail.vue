@@ -1285,18 +1285,63 @@ const submitComment = async () => {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  .hero-section {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-image {
+    width: 100%;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .course-title {
+    font-size: 28px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
   .hero-image img {
     height: 250px;
   }
 
   .course-title {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .course-description {
+    font-size: 14px;
+  }
+
+  .course-meta {
+    gap: 12px;
+    font-size: 13px;
   }
 
   .price-section {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
   }
 
   .btn-buy {
@@ -1315,6 +1360,155 @@ const submitComment = async () => {
 
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .feature-title {
+    font-size: 15px;
+  }
+
+  .feature-content p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .hero-image img {
+    height: 180px;
+    border-radius: 10px;
+  }
+
+  .hero-content {
+    gap: 16px;
+  }
+
+  .course-title {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .course-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .course-meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .meta-item svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .price-section {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .price {
+    width: 100%;
+  }
+
+  .current-price {
+    font-size: 22px;
+  }
+
+  .btn-buy {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .share-section {
+    gap: 10px;
+  }
+
+  .share-label {
+    font-size: 12px;
+  }
+
+  .social-buttons {
+    gap: 10px;
+  }
+
+  .social-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .instructor-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .instructor-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .instructor-info h3 {
+    font-size: 15px;
+  }
+
+  .instructor-info p {
+    font-size: 12px;
+  }
+
+  .features-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    margin: 20px 0 16px 0;
+  }
+
+  .feature-title {
+    font-size: 13px;
+  }
+
+  .feature-content p {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .lessons-section {
+    gap: 12px;
+  }
+
+  .lesson-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .lesson-item h4 {
+    font-size: 13px;
+  }
+
+  .lesson-item p {
+    font-size: 11px;
   }
 }
 </style>

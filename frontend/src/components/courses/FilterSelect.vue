@@ -125,7 +125,76 @@
         color: #252641;
     }
 
-    
+    @media (max-width: 1024px) {
+        .wrapper {
+            width: 160px;
+        }
 
+        .filter {
+            font-size: 16px;
+            padding: 10px 12px;
+        }
 
-</style>
+        .two-columns {
+            width: 50vw !important;
+            font-size: 14px;
+        }
+
+        .option {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .wrapper {
+            width: 140px;
+        }
+
+        .filter {
+            font-size: 14px;
+            padding: 8px 10px;
+        }
+
+        .two-columns {
+            width: 70vw !important;
+            max-height: 250px;
+            font-size: 12px;
+        }
+
+        .option {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .wrapper {
+            width: 100%;
+        }
+
+        .filter {
+            font-size: 13px;
+            padding: 8px 10px;
+            width: 100%;
+        }
+
+        .options {
+            margin-top: 4px;
+        }
+
+        .two-columns {
+            width: 100vw !important;
+            max-width: 100%;
+            max-height: 200px;
+            font-size: 11px;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .option {
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+    }
+
+    </style>

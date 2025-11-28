@@ -184,6 +184,7 @@ const handleCourseClick = (courseId) => {
     .courseSearch{
         margin-top: 2vh;
         margin-bottom: 24px;
+        padding: 0 12px;
     }
 
     .course-list {
@@ -192,6 +193,60 @@ const handleCourseClick = (courseId) => {
         flex-wrap: wrap;
         justify-content: center;
         min-height: 500px;
+        padding: 0 12px;
+    }
+
+    .loading-message {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 500px;
+        font-size: 16px;
+        color: #696983;
+    }
+
+    @media (max-width: 1024px) {
+        .courseSearch {
+            margin-bottom: 20px;
+        }
+
+        .course-list {
+            gap: 16px;
+            padding: 0 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .courseSearch {
+            margin-top: 15px;
+            margin-bottom: 16px;
+            padding: 0 12px;
+        }
+
+        .course-list {
+            gap: 12px;
+            padding: 0 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .courseSearch {
+            margin-top: 12px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+
+        .course-list {
+            gap: 10px;
+            padding: 0 8px;
+            min-height: 300px;
+        }
+
+        .loading-message {
+            min-height: 300px;
+            font-size: 14px;
+        }
     }
 
 </style>

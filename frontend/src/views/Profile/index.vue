@@ -324,6 +324,14 @@ const handleSubmit = async () => {
       userType
     )
 
+    // Actualizar los datos en el sessionStore para que se refleje en el navbar
+    sessionStore.updateUserData(
+      dataToUpdate.nombre,
+      dataToUpdate.apaterno,
+      dataToUpdate.amaterno,
+      dataToUpdate.email
+    )
+
     alert('Perfil actualizado exitosamente')
     avatarPreview.value = null
   } catch (error) {
@@ -724,6 +732,245 @@ const resetPasswordForm = () => {
   .btn-cancel,
   .btn-save {
     width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .profile-page {
+    padding: 30px 0;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .profile-header h1 {
+    font-size: 28px;
+  }
+
+  .profile-card {
+    padding: 24px;
+  }
+
+  .edit-form-card {
+    padding: 24px;
+  }
+
+  .avatar-info h2 {
+    font-size: 20px;
+  }
+
+  .form-title {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 20px 0;
+  }
+
+  .profile-header {
+    margin-bottom: 30px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .profile-avatar {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .avatar-container {
+    margin: 0 auto;
+  }
+
+  .avatar {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .avatar-info h2 {
+    font-size: 18px;
+    margin-top: 8px;
+  }
+
+  .user-email {
+    font-size: 12px;
+    margin: 4px 0 8px 0;
+  }
+
+  .profile-card,
+  .edit-form-card {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-input {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .form-title {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .form {
+    gap: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 20px;
+  }
+
+  .btn-cancel,
+  .btn-save {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .password-hint {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .password-hint p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 15px 0;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+
+  .profile-header {
+    margin-bottom: 20px;
+  }
+
+  .profile-header h1 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .profile-content {
+    gap: 16px;
+  }
+
+  .profile-card,
+  .edit-form-card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .avatar-container {
+    width: 80px;
+  }
+
+  .avatar {
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 40px;
+  }
+
+  .btn-upload-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .avatar-info h2 {
+    font-size: 16px;
+    margin-top: 8px;
+  }
+
+  .user-email {
+    font-size: 11px;
+    margin: 2px 0 6px 0;
+  }
+
+  .avatar-actions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .btn-save-photo,
+  .btn-cancel-photo {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .form-row {
+    gap: 12px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-input {
+    padding: 9px;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+
+  .form-title {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .form {
+    gap: 14px;
+  }
+
+  .form-actions {
+    gap: 6px;
+    padding-top: 16px;
+  }
+
+  .btn-cancel,
+  .btn-save {
+    padding: 9px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+
+  .password-hint {
+    padding: 8px;
+    gap: 6px;
+    border-left-width: 2px;
+  }
+
+  .password-hint p {
+    font-size: 11px;
   }
 }
 </style>

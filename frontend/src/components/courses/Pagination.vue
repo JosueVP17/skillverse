@@ -54,4 +54,45 @@ button {
   cursor: pointer;
   font-weight: 600;
 }
+
+@media (max-width: 1024px) {
+  .pagination {
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: 10px;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+
+  button {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    gap: 8px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+
+  button {
+    padding: 6px 12px;
+    font-size: 11px;
+    flex: 1;
+    min-width: 80px;
+  }
+}
 </style>

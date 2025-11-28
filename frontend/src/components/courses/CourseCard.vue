@@ -153,6 +153,139 @@
         font-weight: bolder;
     }
 
-    
+    @media (max-width: 1024px) {
+        .course-card {
+            width: 30vw;
+        }
 
-</style>
+        .course-title {
+            font-size: 16px;
+        }
+
+        .course-category {
+            font-size: 12px;
+            padding: 3px 8px;
+        }
+
+        .course-description {
+            font-size: 13px;
+        }
+
+        .course-price {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .course-card {
+            width: 45vw;
+        }
+
+        .course-image {
+            height: 160px;
+        }
+
+        .course-title {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .course-category {
+            font-size: 11px;
+            padding: 3px 7px;
+            margin-right: 6px;
+        }
+
+        .course-description {
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .course-time {
+            font-size: 12px;
+        }
+
+        .course-price {
+            font-size: 15px;
+        }
+
+        .course-professor-image {
+            width: 28px;
+            height: 28px;
+        }
+
+        .course-professor-name {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .course-card {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .course-image {
+            width: 100%;
+            height: 140px;
+            margin: 0;
+            border-radius: 12px;
+        }
+
+        .course-content {
+            padding: 12px;
+        }
+
+        .course-title {
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .course-category {
+            font-size: 10px;
+            padding: 2px 6px;
+            margin-right: 4px;
+            margin-bottom: 6px;
+        }
+
+        .course-description {
+            font-size: 11px;
+            margin-bottom: 10px;
+            line-height: 1.3;
+            -webkit-line-clamp: 2;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .h-description {
+            margin-bottom: 6px;
+            gap: 4px;
+        }
+
+        .course-time {
+            font-size: 11px;
+            gap: 2px;
+        }
+
+        .course-price {
+            font-size: 14px;
+        }
+
+        .course-professor-image {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+        }
+
+        .course-professor-name {
+            font-size: 11px;
+        }
+
+        .professor-info {
+            gap: 4px;
+        }
+    }
+
+    </style>

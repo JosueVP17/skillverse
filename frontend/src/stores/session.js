@@ -126,6 +126,15 @@ export const useSessionStore = defineStore('session', () => {
   const setUserPhoto = (photo) => {
     userPhoto.value = photo
   }
+
+  const updateUserData = (nombre, apaterno, amaterno, email) => {
+    if (payload.value) {
+      payload.value.nombre = nombre
+      if (apaterno !== undefined) payload.value.apaterno = apaterno
+      if (amaterno !== undefined) payload.value.amaterno = amaterno
+      if (email !== undefined) payload.value.email = email
+    }
+  }
   
   const restoreSession = () => {
     try {
@@ -210,6 +219,7 @@ export const useSessionStore = defineStore('session', () => {
     setSession,
     clearSession,
     setUserPhoto,
+    updateUserData,
     restoreSession,
     startExpirationCheck
   }
