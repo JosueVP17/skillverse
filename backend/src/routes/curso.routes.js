@@ -71,5 +71,9 @@ CursoRoutes.put(
     verifyUsuarioToken,
     CursoController.updateComment
 )
+CursoRoutes.get(
+    '/',
+    CursoController.getAll
+)
 
 export default CursoRoutes

@@ -7,6 +7,7 @@ import CursoModel from '../models/curso.model.js'
 import CursoRepository from '../repositories/curso.repository.js'
 import ProfesorRepository from '../repositories/profesor.repository.js'
 import UsuarioRepository from '../repositories/usuario.repository.js'
+import UsuarioRepository from '../repositories/usuario.repository.js'
 
 export default {
     async getCursoById(id) {
@@ -111,5 +112,9 @@ export default {
     async updateComment(id, comentarioId, payload) {
         await CursoRepository.updateComment(id, comentarioId, payload)
         return { id }
+    },
+    async getAllCursos(){
+        const cursos = await CursoRepository.getAll()
+        return cursos
     }
 }
