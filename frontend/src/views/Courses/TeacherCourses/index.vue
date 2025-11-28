@@ -20,7 +20,7 @@
 
         <!-- Lista de cursos si existen -->
         <div v-if="teacherCourses.length > 0" class="courses-grid">
-          <div v-for="curso in teacherCourses" :key="curso.id" class="course-card">
+          <div v-for="curso in teacherCourses" :key="curso.id" class="course-card" @click="viewCourse(curso.id)">
             <div class="course-image">
               <img :src="curso.img" :alt="curso.nombre" />
             </div>
@@ -35,8 +35,8 @@
                 </span>
               </div>
               <div class="course-actions">
-                <button class="btn-edit" @click="editCourse(curso)">Editar</button>
-                <button class="btn-delete" @click="deleteCourse(curso.id)">Eliminar</button>
+                <button class="btn-edit" @click.stop="editCourse(curso)">Editar</button>
+                <button class="btn-delete" @click.stop="deleteCourse(curso.id)">Eliminar</button>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@
                 </span>
               </div>
               <div class="course-actions">
-                <button class="btn-view">Ver Curso</button>
+                <button class="btn-view" @click="viewCourse(curso.id)">Ver Curso</button>
               </div>
             </div>
           </div>
@@ -96,11 +96,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { profileService } from '@/services/profile.service'
 import { cursoService } from '@/services/curso.service'
 import CreateCourse from './CreateCourse.vue'
 
+const router = useRouter()
 const sessionStore = useSessionStore()
 const showCreateForm = ref(false)
 const editingCurso = ref(null)
@@ -170,6 +172,10 @@ const deleteCourse = async (cursoId) => {
     alert('Error al eliminar curso: ' + error.message)
     console.error('Delete curso error:', error)
   }
+}
+
+const viewCourse = (cursoId) => {
+  router.push(`/courses/${cursoId}`)
 }
 </script>
 

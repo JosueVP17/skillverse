@@ -166,7 +166,7 @@
           <div class="profesor-card">
             <img :src="profesor.foto" class="profesor-photo" />
             <div class="profesor-info">
-              <h3>{{ profesor.nombre }} {{ profesor.apaterno }} {{ profesor.amaterno }}</h3>
+              <h3>{{ getProfesorFullName(profesor) }}</h3>
               <p class="profesor-occupation">{{ profesor.ocupacion || 'profesor' }}</p>
               <p class="profesor-courses">{{ profesor.cursos?.length || 0 }} cursos creados</p>
             </div>
@@ -279,10 +279,34 @@ onMounted(async () => {
 
     // Cargar información del profesor
     profesor.value = await getProfesor(cursoData.profesor)
+    console.log('Profesor data:', profesor.value) // DEBUG
   }
 })
 
 // Methods
+const getProfesorFullName = (prof) => {
+  if (!prof) return 'Profesor'
+  
+  const nombre = prof.nombre || ''
+  const apaterno = prof.apaterno || ''
+  const amaterno = prof.amaterno || ''
+  
+  // Si apaterno está vacío pero amaterno tiene valor, usar amaterno como apaterno
+  if (!apaterno && amaterno) {
+    return [nombre, amaterno].filter(p => p).join(' ')
+  }
+  
+  // Siempre mostrar nombre y apaterno
+  const parts = [nombre, apaterno]
+  
+  // Agregar amaterno solo si existe y es diferente a apaterno
+  if (amaterno && amaterno !== apaterno) {
+    parts.push(amaterno)
+  }
+  
+  return parts.filter(p => p).join(' ')
+}
+
 const handleBuy = () => {
   alert('Procesando compra...')
 }
