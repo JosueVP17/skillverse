@@ -68,5 +68,9 @@ export default {
     async updateLeccion(id, leccionIndex, leccionData) {
         await CursoRepository.updateLeccion(id, leccionIndex, leccionData)
         return { id }
+    },
+    async getAllCursos(){
+        const cursos = await CursoRepository.getAll()
+        return cursos
     }
 }

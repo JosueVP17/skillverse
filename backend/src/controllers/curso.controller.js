@@ -57,5 +57,13 @@ export default {
         }catch(e){
             res.status(400).json({ ok: false, message: e.message })
         }
+    },
+    async getAll(req,res){
+        try{
+            const result =  await CursoService.getAllCursos()
+            res.status(200).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
     }
 }

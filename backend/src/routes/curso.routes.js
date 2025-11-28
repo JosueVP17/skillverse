@@ -50,5 +50,9 @@ CursoRoutes.put(
     verifyToken,
     CursoController.updateLeccion
 )
+CursoRoutes.get(
+    '/',
+    CursoController.getAll
+)
 
 export default CursoRoutes

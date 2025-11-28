@@ -54,5 +54,30 @@ export default {
 
         await db.collection(COLLECTION).doc(id).update({ lecciones })
         return { id }
+    },
+    async getAll() {
+        const snapshot = await db.collection(COLLECTION).get()
+        const cursos = []
+
+        for (const doc of snapshot.docs) {
+            const data = doc.data()
+            let profesor = null
+            
+            if (data.profesor) {
+                const profSnap = await db.collection('profesores').doc(data.profesor).get()
+                if (profSnap.exists) {
+                    profesor = { id: profSnap.id, nombre: profSnap.data().nombre+' '+profSnap.data().apaterno +' ' +profSnap.data().amaterno, img: profSnap.data().foto}
+                }
+            }
+
+            cursos.push({
+                id: doc.id,
+                ...data,
+                profesor 
+            })
+        }
+
+        return cursos
     }
+
 }
