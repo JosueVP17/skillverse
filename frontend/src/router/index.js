@@ -24,6 +24,11 @@ const router = createRouter({
           name: 'CourseDetail',
           component: () => import('@/views/Courses/CourseDetail.vue'),
         },
+        {
+          path: 'cart',
+          name: 'cart',
+          component: () => import('@/views/Payment/ShoppingCart.vue'),
+        },
       ],
     },
     // Seccion Auth (Login y Register)

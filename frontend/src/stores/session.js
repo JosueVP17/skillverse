@@ -142,7 +142,7 @@ export const useSessionStore = defineStore('session', () => {
       const data = await response.json()
       if (data.ok) {
         await fetchCart()
-        alert('Curso eliminado del carrito.')
+        return { result: true }
       } else {
         console.error('Error al eliminar del carrito:', data.message)
       }
@@ -289,6 +289,7 @@ export const useSessionStore = defineStore('session', () => {
 
     // Actions
     addToCart,
+    fetchCart,
     removeFromCart,
     setSession,
     clearSession,

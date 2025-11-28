@@ -141,7 +141,8 @@
             <li>✓ Acceso de por vida</li>
             <li>✓ Certificado de finalización</li>
             <li>✓ Acceso en todos los dispositivos</li>
-            <li>✓ Material descargable</li>
+            <li>✓ Garantía de 30 días</li>
+            <li>✓ Soporte 24/7</li>
           </ul>
         </div>
 
