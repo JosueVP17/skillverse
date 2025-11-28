@@ -75,16 +75,18 @@ export default {
         const comentarioId = uuidv4()
         const timestamp = new Date().toISOString()
         
-        // Obtener nombre del usuario solo si no es anónimo
+        // Obtener nombre y foto del usuario solo si no es anónimo
         let nombreUsuario = null
+        let fotoUsuario = null
         if (!anonimo) {
             try {
                 const usuario = await UsuarioRepository.findById(usuarioId)
                 if (usuario) {
                     nombreUsuario = `${usuario.nombre || ''} ${usuario.apaterno || ''}`.trim()
+                    fotoUsuario = usuario.foto || null
                 }
             } catch(e) {
-                console.error('Error obteniendo nombre del usuario:', e)
+                console.error('Error obteniendo datos del usuario:', e)
             }
         }
         
@@ -92,6 +94,7 @@ export default {
             id: comentarioId,
             usuarioId,
             nombreUsuario,
+            fotoUsuario,
             anonimo: !!anonimo,
             texto,
             valoracion,

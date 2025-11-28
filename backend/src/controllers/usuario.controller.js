@@ -76,20 +76,19 @@ export default{
         }
     },
 
-    async cancelCourseSubscription(req,res){
+    async getProfile(req,res){
         try{
-            const userId = req.usuario.id
-            const { courseId } = req.body
-            const result = await UsuarioService.cancelCourseSubscription(userId, courseId)
+            const id = req.usuario.id
+            const result = await UsuarioService.getUsuario(id)
             res.status(200).json({ ok: true, result })
         }catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
     },
 
-    async getProfile(req,res){
+    async getUsuarioById(req,res){
         try{
-            const id = req.usuario.id
+            const { id } = req.params
             const result = await UsuarioService.getUsuario(id)
             res.status(200).json({ ok: true, result })
         }catch(e){

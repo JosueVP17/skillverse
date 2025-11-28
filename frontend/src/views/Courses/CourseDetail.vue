@@ -161,7 +161,7 @@
           </div>
         </div>
 
-        <div class="profesor-section">
+        <div class="profesor-section" v-if="profesor">
           <h2>Profesor</h2>
           <div class="profesor-card">
             <img :src="profesor.foto" class="profesor-photo" />
@@ -226,14 +226,20 @@
 
           <!-- Comments List -->
           <div class="comments-list">
-            <div v-if="!course.comentarios || course.comentarios.length === 0" class="no-comments">
+            <div v-if="!comentariosConFotos || comentariosConFotos.length === 0" class="no-comments">
               <p>Sin comentarios aún. ¡Sé el primero en comentar!</p>
             </div>
             <div v-else>
-              <div v-for="comentario in course.comentarios" :key="comentario.id" class="comment-card">
+              <div v-for="comentario in comentariosConFotos" :key="comentario.id" class="comment-card">
                 <div class="comment-header">
                   <div class="user-info">
-                    <div class="user-avatar" :class="{ 'anonymous': comentario.anonimo }">
+                    <div 
+                      v-if="!comentario.anonimo && comentario.fotoUrl" 
+                      class="user-avatar user-photo"
+                    >
+                      <img :src="comentario.fotoUrl" :alt="comentario.nombreUsuario" />
+                    </div>
+                    <div v-else class="user-avatar" :class="{ 'anonymous': comentario.anonimo }">
                       {{ comentario.anonimo ? '?' : getUserInitials(comentario.nombreUsuario || comentario.usuarioId) }}
                     </div>
                     <div class="user-details">
@@ -316,7 +322,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 // STORES
@@ -339,6 +345,22 @@ const newComment = ref({
   valoracion: 5,
   anonimo: false
 })
+const userPhotos = ref({}) // Cache de fotos de usuarios
+
+const preloadUserPhotos = async (comentarios) => {
+  if (!comentarios || comentarios.length === 0) return
+  
+  for (const comentario of comentarios) {
+    // Si el comentario no es anónimo y no tiene fotoUsuario, cargarla
+    if (!comentario.anonimo && comentario.usuarioId && !comentario.fotoUsuario && !userPhotos.value[comentario.usuarioId]) {
+      await getUserPhotoAsync(comentario.usuarioId)
+    }
+    // Si tiene fotoUsuario, guardarla en cache también
+    if (!comentario.anonimo && comentario.fotoUsuario && comentario.usuarioId) {
+      userPhotos.value[comentario.usuarioId] = comentario.fotoUsuario
+    }
+  }
+}
 
 onMounted(async () => {
   uiStore.setTitlePage('Courses')
@@ -355,8 +377,29 @@ onMounted(async () => {
 
     // Cargar información del profesor
     profesor.value = await getProfesor(cursoData.profesor)
-    console.log('Profesor data:', profesor.value) // DEBUG
+    
+    // Precargar fotos de usuarios en comentarios
+    await preloadUserPhotos(cursoData.comentarios)
   }
+})
+
+// Watch para limpiar el cache cuando cambie el usuario
+watch(() => sessionStore.userId, async () => {
+  // Limpiar cache de fotos cuando cambia el usuario
+  userPhotos.value = {}
+  // Recargar fotos de comentarios para la nueva cuenta
+  if (course.value?.comentarios) {
+    await preloadUserPhotos(course.value.comentarios)
+  }
+})
+
+// Computed para comentarios con fotos cargadas
+const comentariosConFotos = computed(() => {
+  if (!course.value?.comentarios) return []
+  return course.value.comentarios.map(comentario => ({
+    ...comentario,
+    fotoUrl: comentario.fotoUsuario || userPhotos.value[comentario.usuarioId] || null
+  }))
 })
 
 // Methods
@@ -448,6 +491,38 @@ const getUserInitials = (nameOrId) => {
   return nameOrId.substring(0, 2).toUpperCase()
 }
 
+const getUserPhotoAsync = async (usuarioId) => {
+  // Si ya está en cache, retornar
+  if (userPhotos.value[usuarioId] !== undefined) {
+    return userPhotos.value[usuarioId]
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/usuarios/foto/${usuarioId}`, {
+      method: 'GET'
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      const foto = data.result?.foto || null
+      // Guardar en cache
+      userPhotos.value[usuarioId] = foto
+      return foto
+    }
+  } catch (error) {
+    console.error('Error obteniendo foto del usuario:', error)
+  }
+
+  // Si algo falla, guardar null en cache para no intentar de nuevo
+  userPhotos.value[usuarioId] = null
+  return null
+}
+
+const getUserPhoto = (usuarioId) => {
+  // Retorna de cache (síncrona) - la foto debe estar precargada
+  return userPhotos.value[usuarioId] || null
+}
+
 const submitComment = async () => {
   if (!newComment.value.texto.trim()) {
     alert('Por favor escribe un comentario')
@@ -484,6 +559,8 @@ const submitComment = async () => {
       const cursoData = await getCurso(courseId)
       if (cursoData) {
         course.value = cursoData
+        // Precargar fotos de usuarios en comentarios
+        await preloadUserPhotos(cursoData.comentarios)
       }
       
       // Limpiar formulario
@@ -1033,6 +1110,19 @@ const submitComment = async () => {
   justify-content: center;
   font-weight: bold;
   font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-avatar.user-photo {
+  background: transparent;
+  overflow: hidden;
+}
+
+.user-avatar.user-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
 }
 
 .user-avatar.anonymous {

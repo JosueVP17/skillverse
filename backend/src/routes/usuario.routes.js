@@ -34,9 +34,15 @@ UsuarioRoutes.get('/profile',
     UsuarioController.getProfile
 )
 
-UsuarioRoutes.post('/cancel-subscription',
+UsuarioRoutes.get('/foto/:id',
+    validate(idUsuarioSchema, 'params'),
+    UsuarioController.getUsuarioById
+)
+
+UsuarioRoutes.get('/:id',
+    validate(idUsuarioSchema, 'params'),
     verifyToken,
-    UsuarioController.cancelCourseSubscription
+    UsuarioController.getUsuarioById
 )
 
 export default UsuarioRoutes
