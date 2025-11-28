@@ -1,8 +1,10 @@
 <template>
   <div class="course-detail-page">
-    <!-- Loading State -->
+    <!-- Skeleton Loader State -->
     <div v-if="!course" class="loading">
-      <p>Cargando curso...</p>
+      <div class="container">
+        <v-skeleton-loader type="image,heading,list-item-avatar-three-line,paragraph,paragraph,divider,actions" />
+      </div>
     </div>
 
     <!-- Course Content -->

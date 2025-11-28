@@ -4,7 +4,8 @@
             type="text"
             v-model="local"
             class="search-input"
-            placeholder="Buscar cursos..."/>
+            placeholder="Buscar cursos..."
+            @keyup.enter="search"/>
 
         <button class="search-button" @click="search">
             <i class="mdi mdi-magnify"></i>

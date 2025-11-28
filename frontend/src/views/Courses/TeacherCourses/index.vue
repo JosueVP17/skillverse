@@ -18,8 +18,15 @@
           @course-created="handleCourseCreated"
         />
 
+        <!-- Skeleton Loader mientras carga -->
+        <div v-if="loadingCourses" class="courses-grid">
+          <div v-for="n in 3" :key="'skeleton-' + n" class="course-card skeleton">
+            <v-skeleton-loader type="image,list-item-three-line,divider,actions" />
+          </div>
+        </div>
+
         <!-- Lista de cursos si existen -->
-        <div v-if="teacherCourses.length > 0" class="courses-grid">
+        <div v-else-if="teacherCourses.length > 0" class="courses-grid">
           <div v-for="curso in teacherCourses" :key="curso.id" class="course-card" @click="viewCourse(curso.id)">
             <div class="course-image">
               <img :src="curso.img" :alt="curso.nombre" />
@@ -58,8 +65,15 @@
           <h1>Mis Cursos</h1>
         </div>
 
+        <!-- Skeleton Loader mientras carga -->
+        <div v-if="loadingCourses" class="courses-grid">
+          <div v-for="n in 3" :key="'skeleton-' + n" class="course-card skeleton">
+            <v-skeleton-loader type="image,list-item-three-line,divider,actions" />
+          </div>
+        </div>
+
         <!-- Lista de cursos suscritos si existen -->
-        <div v-if="studentCourses.length > 0" class="courses-grid">
+        <div v-else-if="studentCourses.length > 0" class="courses-grid">
           <div v-for="curso in studentCourses" :key="curso.id" class="course-card" @click="viewCourse(curso.id)">
             <div class="course-image">
               <img :src="curso.img" :alt="curso.nombre" />
