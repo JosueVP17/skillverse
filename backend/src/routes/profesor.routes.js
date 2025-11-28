@@ -5,7 +5,11 @@ import { validate } from '../middleware/validateProfesor.middleware.js'
 import { idProfesorSchema, loginProfesorSchema, registerProfesorSchema, updateProfesorSchema } from '../schemas/profesor.schema.js'
 
 const ProfesorRoutes = express.Router()
-
+ProfesorRoutes.get(
+    '/:id',
+    validate(idProfesorSchema, 'params'),
+    ProfesorController.getProfesorById
+)
 ProfesorRoutes.post(
     '/register',
     validate(registerProfesorSchema),

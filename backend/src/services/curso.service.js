@@ -8,6 +8,10 @@ import CursoRepository from '../repositories/curso.repository.js'
 import ProfesorRepository from '../repositories/profesor.repository.js'
 
 export default {
+    async getCursoById(id) {
+        const curso = await CursoRepository.findById(id)
+        return curso
+    },
     async createCurso(profId, payload) {
         const { nombre, ...rest } = payload
         const model = new CursoModel({ nombre, profesor: profId, ...rest })
@@ -53,13 +57,16 @@ export default {
         
         return { id }
     },
-    async addLectureToProfesor(id, lectId) {
-        await CursoRepository.addLecture(id, lectId)
-        return { id, lectId }
+    async addLeccion(id, leccion) {
+        await CursoRepository.addLeccion(id, leccion)
+        return { id, leccion }
     },
-
-    async removeLectureFromProfesor(id, lectId) {
-        await CursoRepository.removeLecture(id, lectId)
-        return { id, lectId }
+    async removeLeccion(id, leccionIndex) {
+        await CursoRepository.removeLeccion(id, leccionIndex)
+        return { id }
+    },
+    async updateLeccion(id, leccionIndex, leccionData) {
+        await CursoRepository.updateLeccion(id, leccionIndex, leccionData)
+        return { id }
     }
 }

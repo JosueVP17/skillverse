@@ -7,7 +7,7 @@ const passwordValidation = new RegExp(
 const baseUsuarioSchema = {
     nombre: z.string().min(1,'El nombre es requerido.'),
     apaterno: z.string().min(1,'El apellido paterno es requerido.'),
-    amaterno: z.string().min(1, 'El apellido materno es requerido.'),
+    amaterno: z.string().min(1, 'El apellido materno es requerido.').optional(),
     edad: z.int('La edad debe ser un número entero.').positive('La edad debe ser un número positivo.').min(18,'Debes ser mayor de edad.').max(100,'Ingrese una edad válida.'),
     email: z.email("Email inválido."),
     password: z.string().min(8, {message: "La contraseña debe tener al menos 8 caracteres."}).max(32, {message: "La contraseña no debe exceder 32 caracteres."}).regex(passwordValidation, {message: "Debe contener al menos una letra mayúscula, una letra minúscula, un número y un caracter especial." })
