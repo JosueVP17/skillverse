@@ -10,7 +10,10 @@
 
     <div class="course-list">
         <div v-if="isLoading" class="loading-message">
-            <p>Cargando cursos...</p>
+            <div v-for="n in 3" :key="'skeleton-' + n" class="course-card skeleton">
+                <v-skeleton-loader type="image,list-item-three-line"></v-skeleton-loader>
+            </div>
+            
         </div>
         <template v-else>
             <CourseCard
@@ -196,6 +199,13 @@ const handleCourseClick = (courseId) => {
         padding: 0 12px;
     }
 
+    .course-card.skeleton {
+        width: calc(33.333% - 2vw);
+        min-height: 380px;
+        border-radius: 12px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.10);
+    }
+
     .loading-message {
         display: flex;
         justify-content: center;
@@ -204,6 +214,8 @@ const handleCourseClick = (courseId) => {
         min-height: 500px;
         font-size: 16px;
         color: #696983;
+        flex-wrap: wrap;
+        gap: 2vw;
     }
 
     @media (max-width: 1024px) {
@@ -214,6 +226,11 @@ const handleCourseClick = (courseId) => {
         .course-list {
             gap: 16px;
             padding: 0 16px;
+        }
+
+        .course-card.skeleton {
+            width: calc(50% - 8px);
+            min-height: 360px;
         }
     }
 
@@ -227,6 +244,11 @@ const handleCourseClick = (courseId) => {
         .course-list {
             gap: 12px;
             padding: 0 12px;
+        }
+
+        .course-card.skeleton {
+            width: 100%;
+            min-height: 340px;
         }
     }
 
@@ -246,6 +268,11 @@ const handleCourseClick = (courseId) => {
         .loading-message {
             min-height: 300px;
             font-size: 14px;
+        }
+
+        .course-card.skeleton {
+            width: 100%;
+            min-height: 320px;
         }
     }
 
