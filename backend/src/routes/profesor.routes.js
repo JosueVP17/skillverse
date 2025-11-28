@@ -6,6 +6,18 @@ import { idProfesorSchema, loginProfesorSchema, registerProfesorSchema, updatePr
 
 const ProfesorRoutes = express.Router()
 
+// Las rutas más específicas deben ir primero
+ProfesorRoutes.get(
+    '/profile',
+    verifyToken,
+    ProfesorController.getProfile
+)
+
+ProfesorRoutes.get(
+    '/:id',
+    validate(idProfesorSchema, 'params'),
+    ProfesorController.getProfesorById
+)
 ProfesorRoutes.post(
     '/register',
     validate(registerProfesorSchema),
@@ -34,5 +46,6 @@ ProfesorRoutes.delete(
     verifyToken,
     ProfesorController.delete
 )
+
 
 export default ProfesorRoutes

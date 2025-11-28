@@ -6,10 +6,16 @@ dotenv.config()
 
 import ProfesorModel from '../models/profesor.model.js'
 import ProfesorRepository from '../repositories/profesor.repository.js'
+import CursoRepository from '../repositories/curso.repository.js'
 
 const TOKEN_EXP = '2h'
 
 export default {
+    async getById(id) {
+        const profesor = await ProfesorRepository.findById(id)
+        return profesor
+    },
+
     async registerProfesor(payload) {
         const { email, password, ...rest } = payload
 
@@ -85,5 +91,27 @@ export default {
     async removeCourseFromProfesor(id, courseId) {
         await ProfesorRepository.removeCourse(id, courseId)
         return { id, courseId }
+    },
+
+    async getProfesor(id) {
+        const profesor = await ProfesorRepository.findById(id)
+        if(!profesor) throw new Error('Profesor no encontrado')
+        
+        // Si el profesor tiene cursos, obtener los datos completos de cada uno
+        if (profesor.cursos && profesor.cursos.length > 0) {
+            const cursosData = await Promise.all(
+                profesor.cursos.map(async (cursoId) => {
+                    try {
+                        return await CursoRepository.findById(cursoId)
+                    } catch (e) {
+                        console.error(`Error obteniendo curso ${cursoId}:`, e)
+                        return null
+                    }
+                })
+            )
+            profesor.cursos = cursosData.filter(c => c !== null)
+        }
+        
+        return profesor
     }
 }

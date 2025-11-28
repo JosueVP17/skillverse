@@ -1,6 +1,15 @@
 import ProfesorService from "../services/profesor.service.js"
 
 export default {
+    async getProfesorById(req, res) {
+        try {
+            const profesor = await ProfesorService.getById(req.params.id)
+            res.status(200).json({ ok: true, profesor })
+        } catch (e) {
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+
     async register(req, res) {
         try {
             const result = await ProfesorService.registerProfesor(req.body)
@@ -66,6 +75,16 @@ export default {
             res.status(200).json({ ok: true, result })
         } catch(e) {
             res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+
+    async getProfile(req, res) {
+        try {
+            const id = req.profesor.id
+            const result = await ProfesorService.getProfesor(id)
+            res.status(200).json({ ok: true, result })
+        } catch(e) {
+            res.status(400).json({ ok: false, message: e.message})
         }
     }
 }

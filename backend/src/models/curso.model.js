@@ -3,7 +3,6 @@ import CursoInterface from "../interfaces/curso.interface.js";
 export default class CursoModel extends CursoInterface {
     constructor(data){
         super(data)
-        this.lecciones = this.lecciones || []
     }
 
     toJSON() {
