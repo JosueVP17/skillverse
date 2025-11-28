@@ -1299,12 +1299,30 @@ const submitComment = async () => {
     width: 100%;
   }
 
+  .hero-image img {
+    height: 300px;
+  }
+
   .hero-content {
     width: 100%;
+    padding: 25px;
   }
 
   .course-title {
     font-size: 28px;
+  }
+
+  .course-meta {
+    gap: 20px;
+  }
+
+  .price-section {
+    flex-wrap: wrap;
+  }
+
+  .btn-buy {
+    flex: 1;
+    min-width: 150px;
   }
 
   .section-title {
@@ -1313,6 +1331,24 @@ const submitComment = async () => {
 
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profesor-card {
+    gap: 15px;
+  }
+
+  .profesor-photo {
+    width: 70px;
+    height: 70px;
+  }
+
+  .lesson-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .comment-card {
+    padding: 16px;
   }
 }
 
@@ -1325,33 +1361,90 @@ const submitComment = async () => {
     height: 250px;
   }
 
+  .hero-content {
+    padding: 20px;
+  }
+
   .course-title {
     font-size: 22px;
+    margin-bottom: 12px;
   }
 
   .course-description {
     font-size: 14px;
+    margin-bottom: 15px;
   }
 
   .course-meta {
-    gap: 12px;
-    font-size: 13px;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+
+  .meta-item {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .meta-item svg {
+    width: 14px;
+    height: 14px;
   }
 
   .price-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 12px;
+    padding: 15px 0;
+  }
+
+  .price {
+    width: 100%;
+  }
+
+  .current-price {
+    font-size: 28px;
   }
 
   .btn-buy {
     width: 100%;
     margin-left: 0;
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .share-section {
+    padding-top: 15px;
+  }
+
+  .share-label {
+    font-size: 13px;
+  }
+
+  .social-buttons {
+    gap: 10px;
+  }
+
+  .social-btn {
+    width: 38px;
+    height: 38px;
   }
 
   .instructor-card {
     flex-direction: column;
     text-align: center;
+    gap: 15px;
+  }
+
+  .profesor-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .profesor-photo {
+    width: 70px;
+    height: 70px;
   }
 
   .features-list {
@@ -1360,10 +1453,12 @@ const submitComment = async () => {
 
   .features-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .section-title {
     font-size: 18px;
+    margin-bottom: 20px;
   }
 
   .feature-title {
@@ -1372,6 +1467,70 @@ const submitComment = async () => {
 
   .feature-content p {
     font-size: 13px;
+  }
+
+  .lesson-item {
+    padding: 12px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lesson-number {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .lesson-info h3 {
+    font-size: 14px;
+  }
+
+  .lesson-duration {
+    align-self: flex-start;
+    font-size: 12px;
+  }
+
+  .comment-card {
+    padding: 15px;
+  }
+
+  .comment-header {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .user-name {
+    font-size: 13px;
+  }
+
+  .comment-body {
+    font-size: 13px;
+  }
+
+  .add-comment-section {
+    padding: 20px;
+  }
+
+  .form-group textarea {
+    min-height: 80px;
+    font-size: 13px;
+  }
+
+  .star-rating {
+    gap: 6px;
+  }
+
+  .star-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
   }
 }
 
@@ -1386,34 +1545,45 @@ const submitComment = async () => {
   }
 
   .hero-content {
-    gap: 16px;
+    padding: 16px;
+    gap: 12px;
   }
 
   .course-title {
     font-size: 18px;
     line-height: 1.2;
+    margin-bottom: 10px;
   }
 
   .course-description {
     font-size: 12px;
     line-height: 1.4;
+    margin-bottom: 12px;
   }
 
   .course-meta {
     flex-direction: column;
     gap: 8px;
-    font-size: 12px;
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .meta-item {
+    font-size: 11px;
+    gap: 6px;
   }
 
   .meta-item svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
   }
 
   .price-section {
     flex-direction: column;
     gap: 10px;
     width: 100%;
+    padding: 12px 0;
+    border-width: 0.5px;
   }
 
   .price {
@@ -1427,24 +1597,27 @@ const submitComment = async () => {
   .btn-buy {
     width: 100%;
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: 13px;
+    margin-left: 0;
   }
 
   .share-section {
-    gap: 10px;
+    gap: 8px;
+    padding-top: 12px;
   }
 
   .share-label {
-    font-size: 12px;
+    font-size: 11px;
+    margin-bottom: 8px;
   }
 
   .social-buttons {
-    gap: 10px;
+    gap: 8px;
   }
 
   .social-btn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
   }
 
   .social-btn svg {
@@ -1463,16 +1636,40 @@ const submitComment = async () => {
   }
 
   .instructor-info h3 {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .instructor-info p {
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  .profesor-card {
+    padding: 12px;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .profesor-photo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+  }
+
+  .profesor-info h3 {
+    font-size: 14px;
+  }
+
+  .profesor-info p {
+    font-size: 11px;
   }
 
   .features-list {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .features-list li {
+    font-size: 12px;
   }
 
   .features-grid {
@@ -1480,35 +1677,198 @@ const submitComment = async () => {
     gap: 12px;
   }
 
+  .feature-image {
+    height: 150px;
+  }
+
+  .feature-badge {
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .feature-content {
+    padding: 16px;
+  }
+
+  .feature-content h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .feature-content p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
   .section-title {
     font-size: 16px;
-    margin: 20px 0 16px 0;
+    margin: 20px 0 12px 0;
   }
 
   .feature-title {
     font-size: 13px;
   }
 
-  .feature-content p {
-    font-size: 11px;
-    line-height: 1.3;
-  }
-
-  .lessons-section {
-    gap: 12px;
-  }
-
-  .lesson-item {
-    padding: 12px;
+  .lessons-list {
     gap: 10px;
   }
 
-  .lesson-item h4 {
-    font-size: 13px;
+  .lesson-item {
+    padding: 10px;
+    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .lesson-item p {
+  .lesson-number {
+    width: 26px;
+    height: 26px;
     font-size: 11px;
+  }
+
+  .lesson-info h3 {
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .lesson-info p {
+    font-size: 10px;
+  }
+
+  .lesson-duration {
+    font-size: 10px;
+    align-self: flex-start;
+  }
+
+  .rating-summary {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .score {
+    font-size: 32px;
+  }
+
+  .stars {
+    font-size: 18px;
+  }
+
+  .total-reviews {
+    font-size: 12px;
+  }
+
+  .rating-score {
+    gap: 12px;
+  }
+
+  .add-comment-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .add-comment-section h3 {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .comment-form {
+    gap: 12px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .form-group textarea {
+    min-height: 80px;
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .char-count {
+    font-size: 10px;
+  }
+
+  .star-rating {
+    gap: 4px;
+  }
+
+  .star-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+
+  .btn-submit-comment {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  .no-comments {
+    padding: 30px 16px;
+    font-size: 12px;
+  }
+
+  .comment-card {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .comment-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  .user-info {
+    gap: 8px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+  }
+
+  .user-name {
+    font-size: 12px;
+  }
+
+  .comment-date {
+    font-size: 10px;
+  }
+
+  .comment-body {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .rating-value {
+    font-size: 12px;
+  }
+
+  .why-buy-section {
+    margin: 40px auto 30px;
+  }
+
+  .why-buy-header {
+    margin-bottom: 30px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+  }
+
+  .why-buy-header h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .why-buy-header p {
+    font-size: 13px;
   }
 }
 </style>
