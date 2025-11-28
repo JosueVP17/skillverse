@@ -13,6 +13,7 @@
             <div class="avatar-container">
               <v-avatar size="120" color="rgba(73, 187, 189, 0.3)" class="avatar">
                 <img v-if="avatarPreview" :src="avatarPreview" alt="Avatar" />
+                <img v-else-if="userPhoto" :src="userPhoto" alt="Avatar" />
                 <v-icon v-else size="60">mdi-account-circle</v-icon>
               </v-avatar>
               <div class="avatar-upload">
@@ -31,6 +32,15 @@
                   <v-icon size="18">mdi-camera-plus</v-icon>
                 </button>
               </div>
+            </div>
+            <!-- Botones para foto -->
+            <div v-if="avatarPreview" class="avatar-actions">
+              <button type="button" class="btn-save-photo" @click="handleSavePhoto" :disabled="loading">
+                {{ loading ? 'Guardando...' : 'Guardar Foto' }}
+              </button>
+              <button type="button" class="btn-cancel-photo" @click="cancelPhotoUpload">
+                Cancelar
+              </button>
             </div>
             <div class="avatar-info">
               <h2>{{ sessionStore.userName }}</h2>
@@ -190,13 +200,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useSessionStore } from '@/stores/session'
+import { profileService } from '@/services/profile.service'
 
 const sessionStore = useSessionStore()
 const loading = ref(false)
 const fileInput = ref(null)
 const avatarPreview = ref(null)
+const userPhoto = ref(null)
 
 const formData = ref({
   nombre: sessionStore.userName?.split(' ')[0] || '',
@@ -210,6 +222,42 @@ const passwordData = ref({
   current: '',
   new: '',
   confirm: ''
+})
+
+// Cargar perfil del usuario cuando se monta el componente
+onMounted(async () => {
+  // 1. Primero mostrar foto del sessionStore si existe (carga instantánea)
+  if (sessionStore.userPhoto) {
+    userPhoto.value = sessionStore.userPhoto
+  }
+
+  // 2. Cargar datos del servidor en segundo plano
+  try {
+    const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+    const response = await profileService.getProfile(sessionStore.token, userType)
+    
+    if (response.ok && response.result) {
+      const userData = response.result
+      // Actualizar foto si existe
+      if (userData.foto) {
+        userPhoto.value = userData.foto
+        // Actualizar en el sessionStore si es diferente
+        if (userData.foto !== sessionStore.userPhoto) {
+          sessionStore.setUserPhoto(userData.foto)
+        }
+      }
+      // Actualizar datos del formulario con los datos del servidor
+      formData.value = {
+        nombre: userData.nombre || formData.value.nombre,
+        apaterno: userData.apaterno || formData.value.apaterno,
+        amaterno: userData.amaterno || formData.value.amaterno,
+        edad: userData.edad || formData.value.edad,
+        email: userData.email || formData.value.email
+      }
+    }
+  } catch (error) {
+    console.error('Error cargando perfil:', error)
+  }
 })
 
 const handleAvatarUpload = (event) => {
@@ -237,12 +285,39 @@ const handleAvatarUpload = (event) => {
 }
 
 const handleSubmit = async () => {
+  if (!formData.value.nombre || !formData.value.apaterno || !formData.value.amaterno || !formData.value.edad || !formData.value.email) {
+    alert('Por favor completa todos los campos obligatorios')
+    return
+  }
+
   loading.value = true
-  // Funcionalidad a agregar después
-  setTimeout(() => {
-    alert('Cambios guardados (sin funcionalidad aún)')
+  try {
+    const dataToUpdate = {
+      nombre: formData.value.nombre,
+      apaterno: formData.value.apaterno,
+      amaterno: formData.value.amaterno,
+      edad: formData.value.edad,
+      email: formData.value.email
+    }
+
+    const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+    
+    // Actualizar solo datos personales (foto se maneja por separado en el futuro)
+    await profileService.updateProfile(
+      sessionStore.userId,
+      dataToUpdate,
+      sessionStore.token,
+      userType
+    )
+
+    alert('Perfil actualizado exitosamente')
+    avatarPreview.value = null
+  } catch (error) {
+    alert('Error: ' + error.message)
+    console.error('Profile update error:', error)
+  } finally {
     loading.value = false
-  }, 500)
+  }
 }
 
 const resetForm = () => {
@@ -255,19 +330,76 @@ const resetForm = () => {
   }
 }
 
+const handleSavePhoto = async () => {
+  if (!avatarPreview.value) {
+    alert('Por favor selecciona una foto')
+    return
+  }
+
+  loading.value = true
+  try {
+    const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+    await profileService.updateProfilePhoto(
+      sessionStore.userId,
+      avatarPreview.value,
+      sessionStore.token,
+      userType
+    )
+
+    // Actualizar la foto mostrada
+    userPhoto.value = avatarPreview.value
+    // Actualizar también en el sessionStore para que se vea en el navbar
+    sessionStore.setUserPhoto(avatarPreview.value)
+    avatarPreview.value = null
+    alert('Foto actualizada exitosamente')
+  } catch (error) {
+    alert('Error al guardar la foto: ' + error.message)
+    console.error('Photo save error:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const cancelPhotoUpload = () => {
+  avatarPreview.value = null
+}
+
 const handlePasswordChange = async () => {
   if (passwordData.value.new !== passwordData.value.confirm) {
     alert('Las contraseñas no coinciden')
     return
   }
-  
+
+  if (!passwordData.value.current || !passwordData.value.new) {
+    alert('Por favor completa todos los campos')
+    return
+  }
+
+  // Validar contraseña: mayúsculas, minúsculas, números, caracteres especiales, 8-32 caracteres
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/
+  if (!passwordRegex.test(passwordData.value.new)) {
+    alert('La contraseña debe tener: mayúsculas, minúsculas, números, caracteres especiales (@$!%*?&) y entre 8-32 caracteres')
+    return
+  }
+
   loading.value = true
-  // Funcionalidad a agregar después
-  setTimeout(() => {
-    alert('Contraseña actualizada (sin funcionalidad aún)')
-    loading.value = false
+  try {
+    const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+    await profileService.changePassword(
+      sessionStore.userId,
+      passwordData.value.new,
+      sessionStore.token,
+      userType
+    )
+
+    alert('Contraseña actualizada exitosamente')
     resetPasswordForm()
-  }, 500)
+  } catch (error) {
+    alert('Error: ' + error.message)
+    console.error('Password change error:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 const resetPasswordForm = () => {
@@ -363,6 +495,51 @@ const resetPasswordForm = () => {
   background: rgba(73, 187, 189, 0.85);
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(73, 187, 189, 0.3);
+}
+
+.avatar-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.btn-save-photo,
+.btn-cancel-photo {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-save-photo {
+  background: rgba(73, 187, 189, 1);
+  color: white;
+  flex: 1;
+}
+
+.btn-save-photo:hover:not(:disabled) {
+  background: rgba(73, 187, 189, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(73, 187, 189, 0.3);
+}
+
+.btn-save-photo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel-photo {
+  background: #f0f0f0;
+  color: #1a1a1a;
+  flex: 1;
+}
+
+.btn-cancel-photo:hover {
+  background: #e0e0e0;
 }
 
 .avatar-info {

@@ -28,6 +28,7 @@ export const updateUsuarioSchema = z.object({
     amaterno: z.string().min(1, 'El apellido materno es requerido.').optional(),
     edad: z.int('La edad debe ser un número entero.').positive('La edad debe ser un número positivo.').min(18,'Debes ser mayor de edad.').max(100,'Ingrese una edad válida.').optional(),
     email: z.email("Email inválido.").optional(),
+    foto: z.string().optional(),
     password: z.string().min(8, {message: "La contraseña debe tener al menos 8 caracteres."}).max(32, {message: "La contraseña no debe exceder 32 caracteres."}).regex(passwordValidation, {message: "Debe contener al menos una letra mayúscula, una letra minúscula, un número y un caracter especial." }).optional()
 })
 

@@ -85,5 +85,11 @@ export default {
     async removeCourseFromProfesor(id, courseId) {
         await ProfesorRepository.removeCourse(id, courseId)
         return { id, courseId }
+    },
+
+    async getProfesor(id) {
+        const profesor = await ProfesorRepository.findById(id)
+        if(!profesor) throw new Error('Profesor no encontrado')
+        return profesor
     }
 }

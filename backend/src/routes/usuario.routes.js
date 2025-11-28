@@ -29,4 +29,9 @@ UsuarioRoutes.delete('/delete/:id',
     UsuarioController.delete
 )
 
+UsuarioRoutes.get('/profile',
+    verifyToken,
+    UsuarioController.getProfile
+)
+
 export default UsuarioRoutes

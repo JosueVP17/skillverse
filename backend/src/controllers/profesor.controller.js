@@ -67,5 +67,15 @@ export default {
         } catch(e) {
             res.status(400).json({ ok: false, message: e.message })
         }
+    },
+
+    async getProfile(req, res) {
+        try {
+            const id = req.profesor.id
+            const result = await ProfesorService.getProfesor(id)
+            res.status(200).json({ ok: true, result })
+        } catch(e) {
+            res.status(400).json({ ok: false, message: e.message})
+        }
     }
 }

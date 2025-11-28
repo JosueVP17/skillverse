@@ -34,5 +34,10 @@ ProfesorRoutes.delete(
     verifyToken,
     ProfesorController.delete
 )
+ProfesorRoutes.get(
+    '/profile',
+    verifyToken,
+    ProfesorController.getProfile
+)
 
 export default ProfesorRoutes

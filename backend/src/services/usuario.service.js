@@ -87,5 +87,11 @@ export default {
     async removeCommentFromUser(id, commentId){
         await UsuarioRepository.removeComment(id, commentId)
         return {id, commentId}
+    },
+
+    async getUsuario(id){
+        const usuario = await UsuarioRepository.findById(id)
+        if(!usuario) throw new Error('Usuario no encontrado')
+        return usuario
     }
 }

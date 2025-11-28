@@ -5,6 +5,7 @@ export const useSessionStore = defineStore('session', () => {
   // Estado
   const token = ref(null)
   const payload = ref(null)
+  const userPhoto = ref(null)
 
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!payload.value)
@@ -115,10 +116,15 @@ export const useSessionStore = defineStore('session', () => {
   const clearSession = () => {
     token.value = null
     payload.value = null
+    userPhoto.value = null
     
     localStorage.removeItem('token')
     localStorage.removeItem('userType')
     localStorage.removeItem('rememberMe')
+  }
+
+  const setUserPhoto = (photo) => {
+    userPhoto.value = photo
   }
   
   const restoreSession = () => {
@@ -187,6 +193,7 @@ export const useSessionStore = defineStore('session', () => {
     // State
     token,
     payload,
+    userPhoto,
     
     // Getters
     isAuthenticated,
@@ -202,6 +209,7 @@ export const useSessionStore = defineStore('session', () => {
     // Actions
     setSession,
     clearSession,
+    setUserPhoto,
     restoreSession,
     startExpirationCheck
   }
