@@ -33,5 +33,9 @@ export default {
     async removeLectureFromProfesor(id, lectId) {
         await CursoRepository.removeLecture(id, lectId)
         return { id, lectId }
+    },
+    async getAllCursos(){
+        const cursos = await CursoRepository.getAll()
+        return cursos
     }
 }

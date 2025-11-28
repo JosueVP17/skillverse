@@ -25,5 +25,9 @@ CursoRoutes.delete(
     verifyToken,
     CursoController.delete
 )
+CursoRoutes.get(
+    '/',
+    CursoController.getAll
+)
 
 export default CursoRoutes
