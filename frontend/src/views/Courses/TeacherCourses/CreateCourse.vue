@@ -58,11 +58,18 @@
             <label>Categoría *</label>
             <select v-model="formData.categoria">
               <option value="">Selecciona una categoría</option>
-              <option value="programacion">Programación</option>
-              <option value="diseño">Diseño</option>
-              <option value="marketing">Marketing</option>
-              <option value="negocios">Negocios</option>
-              <option value="otros">Otros</option>
+              <option value="Tecnología y Programación">Tecnología y Programación</option>
+              <option value="Ciencia de Datos e Inteligencia Artificial">Ciencia de Datos e Inteligencia Artificial</option>
+              <option value="Diseño y Creatividad (Diseño gráfico, UX/UI, 3D…)">Diseño y Creatividad (Diseño gráfico, UX/UI, 3D…)</option>
+              <option value="Negocios y Emprendimiento">Negocios y Emprendimiento</option>
+              <option value="Marketing y Ventas">Marketing y Ventas</option>
+              <option value="Idiomas">Idiomas</option>
+              <option value="Habilidades Profesionales / Soft Skills">Habilidades Profesionales / Soft Skills</option>
+              <option value="Desarrollo Personal">Desarrollo Personal</option>
+              <option value="Ciencias y Matemáticas">Ciencias y Matemáticas</option>
+              <option value="Salud y Bienestar">Salud y Bienestar</option>
+              <option value="Arte y Música">Arte y Música</option>
+              <option value="Educación y Pedagogía">Educación y Pedagogía</option>
             </select>
           </div>
 

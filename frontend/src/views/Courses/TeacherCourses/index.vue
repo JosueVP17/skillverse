@@ -74,9 +74,6 @@
                   {{ curso.complejidad }}
                 </span>
               </div>
-              <div class="course-actions">
-                <button class="btn-cancel" @click.stop="cancelSubscription(curso.id)">Cancelar Suscripción</button>
-              </div>
             </div>
           </div>
         </div>
@@ -176,38 +173,6 @@ const deleteCourse = async (cursoId) => {
 
 const viewCourse = (cursoId) => {
   router.push(`/courses/${cursoId}`)
-}
-
-const cancelSubscription = async (cursoId) => {
-  if (!confirm('¿Estás seguro que quieres cancelar tu suscripción a este curso?')) {
-    return
-  }
-
-  try {
-    const response = await fetch('http://localhost:5000/api/usuarios/cancel-subscription', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionStore.token}`
-      },
-      body: JSON.stringify({
-        courseId: cursoId
-      })
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      alert('Suscripción cancelada')
-      // Recargar los cursos
-      await loadCourses()
-    } else {
-      alert('Error al cancelar suscripción: ' + data.message)
-    }
-  } catch (error) {
-    console.error('Error:', error)
-    alert('Error al cancelar suscripción')
-  }
 }
 </script>
 
@@ -427,8 +392,7 @@ const cancelSubscription = async (cursoId) => {
 
 .btn-edit,
 .btn-delete,
-.btn-view,
-.btn-cancel {
+.btn-view {
   flex: 1;
   padding: 10px 16px;
   border: none;
@@ -465,15 +429,6 @@ const cancelSubscription = async (cursoId) => {
 
 .btn-view:hover {
   background: rgba(73, 187, 189, 0.85);
-}
-
-.btn-cancel {
-  background: #ff6b6b;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background: #ff5252;
 }
 
 @media (max-width: 768px) {
