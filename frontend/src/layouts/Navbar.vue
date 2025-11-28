@@ -29,7 +29,10 @@
                         v-bind="props"
                         append-icon="mdi-chevron-down"
                     >
-                        <v-icon start size="20">mdi-account-circle</v-icon>
+                        <v-avatar size="24" class="me-2">
+                            <img v-if="sessionStore.userPhoto" :src="sessionStore.userPhoto" alt="Avatar" />
+                            <v-icon v-else size="18">mdi-account-circle</v-icon>
+                        </v-avatar>
                         <span class="user-name">{{ sessionStore.userName }}</span>
                     </v-btn>
                 </template>
@@ -39,7 +42,8 @@
                     <v-list-item class="user-info">
                         <template v-slot:prepend>
                             <v-avatar color="teal-lighten-1" size="48">
-                                <v-icon size="32">mdi-account-circle</v-icon>
+                                <img v-if="sessionStore.userPhoto" :src="sessionStore.userPhoto" alt="Avatar" />
+                                <v-icon v-else size="32">mdi-account-circle</v-icon>
                             </v-avatar>
                         </template>
                         
@@ -107,12 +111,6 @@
                         @click="goToMyCourses"
                     ></v-list-item>
 
-                    <v-list-item
-                        prepend-icon="mdi-cog"
-                        title="Configuración"
-                        @click="goToSettings"
-                    ></v-list-item>
-
                     <v-divider></v-divider>
 
                     <v-list-item
@@ -131,10 +129,28 @@
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useAuthStore } from '@/stores/auth'
+import { ref, onMounted } from 'vue'
+import { profileService } from '@/services/profile.service'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
 const authStore = useAuthStore()
+
+// Cargar foto cuando se monta el componente (solo si no está en el store)
+onMounted(async () => {
+  try {
+    if (sessionStore.isAuthenticated && sessionStore.token && !sessionStore.userPhoto) {
+      const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+      const response = await profileService.getProfile(sessionStore.token, userType)
+      
+      if (response.ok && response.result?.foto) {
+        sessionStore.setUserPhoto(response.result.foto)
+      }
+    }
+  } catch (error) {
+    console.error('Error cargando foto del perfil:', error)
+  }
+})
 
 // Navegación
 const goToProfile = () => {
@@ -142,22 +158,13 @@ const goToProfile = () => {
 }
 
 const goToMyCourses = () => {
-    if (sessionStore.isTeacher) {
-        router.push({ name: 'teacher-courses' })
-    } else {
-        router.push({ name: 'my-courses' })
-    }
+    router.push({ name: 'teacher-courses' })
 }
 
-const goToSettings = () => {
-    router.push({ name: 'settings' })
-}
-
-// Cerrar sesión
 const handleLogout = async () => {
     try {
         await authStore.logout()
-        router.push({ name: 'home' })
+        router.push({ name: 'login' })
     } catch (error) {
         console.error('Error al cerrar sesión:', error)
     }
