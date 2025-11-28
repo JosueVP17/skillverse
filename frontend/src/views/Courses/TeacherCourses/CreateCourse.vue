@@ -2,41 +2,41 @@
   <div class="modal-overlay" @click.self="closeModal">
     <div class="modal">
       <div class="modal-header">
-        <h2>Crear Nuevo Curso</h2>
+        <h2>{{ editingCurso ? 'Editar Curso' : 'Crear Nuevo Curso' }}</h2>
         <button class="close-btn" @click="closeModal">✕</button>
       </div>
 
       <form @submit.prevent="submitForm" class="form">
         <div class="form-group">
           <label>Nombre del Curso *</label>
-          <input type="text" placeholder="Ej: Introducción a Vue.js" />
+          <input v-model="formData.nombre" type="text" placeholder="Ej: Introducción a Vue.js" />
         </div>
 
         <div class="form-group">
           <label>Descripción *</label>
-          <textarea placeholder="Describe el contenido del curso" rows="4"></textarea>
+          <textarea v-model="formData.descripcion" placeholder="Describe el contenido del curso" rows="4"></textarea>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Precio (MXN) *</label>
-            <input type="number" placeholder="299" min="0" />
+            <input v-model.number="formData.precio" type="number" placeholder="299" min="0" />
           </div>
 
           <div class="form-group">
             <label>Duración (horas) *</label>
-            <input type="number" placeholder="20" min="0" />
+            <input v-model.number="formData.duracion" type="number" placeholder="20" min="0" />
           </div>
         </div>
 
         <div class="form-group">
           <label>URL de Imagen *</label>
-          <input type="url" placeholder="https://..." />
+          <input v-model="formData.img" type="url" placeholder="https://..." />
         </div>
 
         <div class="form-group">
           <label>Categoría *</label>
-          <select>
+          <select v-model="formData.categoria">
             <option value="">Selecciona una categoría</option>
             <option value="programacion">Programación</option>
             <option value="diseño">Diseño</option>
@@ -48,7 +48,7 @@
 
         <div class="form-group">
           <label>Nivel de Complejidad *</label>
-          <select>
+          <select v-model="formData.complejidad">
             <option value="">Selecciona el nivel</option>
             <option value="Principiante">Principiante</option>
             <option value="Intermedio">Intermedio</option>
@@ -58,7 +58,9 @@
 
         <div class="form-actions">
           <button type="button" class="btn-cancel" @click="closeModal">Cancelar</button>
-          <button type="submit" class="btn-submit">Crear Curso</button>
+          <button type="submit" class="btn-submit" :disabled="loading">
+            {{ loading ? (editingCurso ? 'Guardando...' : 'Creando...') : (editingCurso ? 'Guardar Cambios' : 'Crear Curso') }}
+          </button>
         </div>
       </form>
     </div>
@@ -66,15 +68,111 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['close'])
+import { ref, watch, onMounted } from 'vue'
+import { useSessionStore } from '@/stores/session'
+import { cursoService } from '@/services/curso.service'
+
+const props = defineProps({
+  editingCurso: {
+    type: Object,
+    default: null
+  }
+})
+
+const emit = defineEmits(['close', 'course-created'])
+const sessionStore = useSessionStore()
+const loading = ref(false)
+
+const formData = ref({
+  nombre: '',
+  descripcion: '',
+  precio: null,
+  duracion: null,
+  img: '',
+  categoria: '',
+  complejidad: ''
+})
+
+// Cuando se pasa un curso a editar, rellenar el formulario
+watch(() => props.editingCurso, (newCurso) => {
+  if (newCurso) {
+    formData.value = {
+      nombre: newCurso.nombre,
+      descripcion: newCurso.descripcion,
+      precio: newCurso.precio,
+      duracion: newCurso.duracion,
+      img: newCurso.img,
+      categoria: newCurso.categoria,
+      complejidad: newCurso.complejidad
+    }
+  }
+}, { immediate: true })
 
 const closeModal = () => {
   emit('close')
 }
 
-const submitForm = () => {
-  // Funcionalidad a agregar después
-  alert('Formulario enviado (sin funcionalidad aún)')
+const submitForm = async () => {
+  // Validar campos obligatorios
+  if (!formData.value.nombre || !formData.value.descripcion || !formData.value.precio || 
+      !formData.value.duracion || !formData.value.img || !formData.value.categoria || !formData.value.complejidad) {
+    alert('Por favor completa todos los campos')
+    return
+  }
+
+  // Validar que sea URL válida
+  try {
+    new URL(formData.value.img)
+  } catch (e) {
+    alert('La imagen debe ser una URL válida (ej: https://...)')
+    return
+  }
+
+  loading.value = true
+  try {
+    // Asegurar que precio y duracion sean números
+    const dataToSend = {
+      ...formData.value,
+      precio: Number(formData.value.precio),
+      duracion: Number(formData.value.duracion)
+    }
+
+    let response
+    if (props.editingCurso) {
+      // Editar curso existente
+      response = await cursoService.updateCurso(props.editingCurso.id, dataToSend, sessionStore.token)
+      if (response.ok) {
+        alert('Curso actualizado exitosamente')
+        emit('course-created', { ...props.editingCurso, ...response.result })
+      }
+    } else {
+      // Crear nuevo curso
+      response = await cursoService.createCurso(dataToSend, sessionStore.token)
+      if (response.ok) {
+        alert('Curso creado exitosamente')
+        emit('course-created', response.result)
+      }
+    }
+    
+    if (response.ok) {
+      closeModal()
+      // Limpiar formulario
+      formData.value = {
+        nombre: '',
+        descripcion: '',
+        precio: null,
+        duracion: null,
+        img: '',
+        categoria: '',
+        complejidad: ''
+      }
+    }
+  } catch (error) {
+    alert('Error: ' + error.message)
+    console.error('Curso error:', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 

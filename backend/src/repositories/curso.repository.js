@@ -4,12 +4,14 @@ const COLLECTION = 'cursos'
 
 export default {
     async create(id, data) {
-        const ref = await db.collection(COLLECTION).doc(id).set(data)
-        return { id }
+        await db.collection(COLLECTION).doc(id).set(data)
+        const doc = await db.collection(COLLECTION).doc(id).get()
+        return { id: doc.id, ...doc.data() }
     },
     async update(id, data) {
         await db.collection(COLLECTION).doc(id).update(data)
-        return { id }
+        const doc = await db.collection(COLLECTION).doc(id).get()
+        return { id: doc.id, ...doc.data() }
     },
     async delete(id) {
         await db.collection(COLLECTION).doc(id).delete()

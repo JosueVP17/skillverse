@@ -6,6 +6,7 @@ dotenv.config()
 
 import UsuarioModel from '../models/usuario.model.js'
 import UsuarioRepository from '../repositories/usuario.repository.js'
+import CursoRepository from '../repositories/curso.repository.js'
 
 const TOKEN_EXP = '2h'
 
@@ -92,6 +93,22 @@ export default {
     async getUsuario(id){
         const usuario = await UsuarioRepository.findById(id)
         if(!usuario) throw new Error('Usuario no encontrado')
+        
+        // Si el usuario tiene cursos comprados, obtener los datos completos de cada uno
+        if (usuario.cursosComprados && usuario.cursosComprados.length > 0) {
+            const cursosData = await Promise.all(
+                usuario.cursosComprados.map(async (cursoId) => {
+                    try {
+                        return await CursoRepository.findById(cursoId)
+                    } catch (e) {
+                        console.error(`Error obteniendo curso ${cursoId}:`, e)
+                        return null
+                    }
+                })
+            )
+            usuario.cursosComprados = cursosData.filter(c => c !== null)
+        }
+        
         return usuario
     }
 }
