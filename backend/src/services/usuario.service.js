@@ -80,6 +80,11 @@ export default {
         return {id, courseId}
     },
 
+    async cancelCourseSubscription(id, courseId){
+        await UsuarioRepository.cancelCourseSubscription(id, courseId)
+        return {id, courseId}
+    },
+
     async addCommentToUser(id, commentId){
         await UsuarioRepository.addComment(id, commentId)
         return {id, commentId}

@@ -54,5 +54,35 @@ export default {
 
         await db.collection(COLLECTION).doc(id).update({ lecciones })
         return { id }
+    },
+    async addComment(id, comentario) {
+        await db.collection(COLLECTION).doc(id).update({
+            comentarios: admin.firestore.FieldValue.arrayUnion(comentario)
+        })
+        return { id }
+    },
+    async removeComment(id, comentarioId) {
+        const curso = await this.findById(id)
+        if (!curso || !curso.comentarios) {
+            throw new Error('Curso o comentarios no encontrados')
+        }
+
+        const comentarios = (curso.comentarios || []).filter(c => c.id !== comentarioId)
+
+        await db.collection(COLLECTION).doc(id).update({ comentarios })
+        return { id }
+    },
+    async updateComment(id, comentarioId, comentarioData) {
+        const curso = await this.findById(id)
+        if (!curso || !curso.comentarios) {
+            throw new Error('Curso o comentarios no encontrados')
+        }
+
+        const comentarios = (curso.comentarios || []).map(c => 
+            c.id === comentarioId ? { ...c, ...comentarioData } : c
+        )
+
+        await db.collection(COLLECTION).doc(id).update({ comentarios })
+        return { id }
     }
 }

@@ -58,3 +58,14 @@ export const updateLeccionSchema = z.object({
     texto: z.string().min(1, 'El texto es requerido.').optional(),
     video: z.url('El video debe ser una URL válida.').optional()
 })
+
+export const createCommentSchema = z.object({
+    texto: z.string().min(1, 'El comentario no puede estar vacío.').max(500, 'El comentario no puede exceder 500 caracteres.'),
+    valoracion: z.number().int().min(1, 'La valoración debe ser entre 1 y 5.').max(5, 'La valoración debe ser entre 1 y 5.'),
+    anonimo: z.boolean().optional().default(false)
+})
+
+export const updateCommentSchema = z.object({
+    texto: z.string().min(1, 'El comentario no puede estar vacío.').max(500, 'El comentario no puede exceder 500 caracteres.').optional(),
+    valoracion: z.number().int().min(1, 'La valoración debe ser entre 1 y 5.').max(5, 'La valoración debe ser entre 1 y 5.').optional()
+})

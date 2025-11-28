@@ -6,6 +6,7 @@ dotenv.config()
 import CursoModel from '../models/curso.model.js'
 import CursoRepository from '../repositories/curso.repository.js'
 import ProfesorRepository from '../repositories/profesor.repository.js'
+import UsuarioRepository from '../repositories/usuario.repository.js'
 
 export default {
     async getCursoById(id) {
@@ -67,6 +68,45 @@ export default {
     },
     async updateLeccion(id, leccionIndex, leccionData) {
         await CursoRepository.updateLeccion(id, leccionIndex, leccionData)
+        return { id }
+    },
+    async addComment(id, usuarioId, payload) {
+        const { texto, valoracion, anonimo } = payload
+        const comentarioId = uuidv4()
+        const timestamp = new Date().toISOString()
+        
+        // Obtener nombre del usuario solo si no es anónimo
+        let nombreUsuario = null
+        if (!anonimo) {
+            try {
+                const usuario = await UsuarioRepository.findById(usuarioId)
+                if (usuario) {
+                    nombreUsuario = `${usuario.nombre || ''} ${usuario.apaterno || ''}`.trim()
+                }
+            } catch(e) {
+                console.error('Error obteniendo nombre del usuario:', e)
+            }
+        }
+        
+        const comentario = {
+            id: comentarioId,
+            usuarioId,
+            nombreUsuario,
+            anonimo: !!anonimo,
+            texto,
+            valoracion,
+            fecha: timestamp
+        }
+        
+        await CursoRepository.addComment(id, comentario)
+        return comentario
+    },
+    async removeComment(id, comentarioId) {
+        await CursoRepository.removeComment(id, comentarioId)
+        return { id }
+    },
+    async updateComment(id, comentarioId, payload) {
+        await CursoRepository.updateComment(id, comentarioId, payload)
         return { id }
     }
 }

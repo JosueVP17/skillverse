@@ -34,4 +34,9 @@ UsuarioRoutes.get('/profile',
     UsuarioController.getProfile
 )
 
+UsuarioRoutes.post('/cancel-subscription',
+    verifyToken,
+    UsuarioController.cancelCourseSubscription
+)
+
 export default UsuarioRoutes

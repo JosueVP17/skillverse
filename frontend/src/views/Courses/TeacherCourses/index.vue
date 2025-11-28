@@ -60,7 +60,7 @@
 
         <!-- Lista de cursos suscritos si existen -->
         <div v-if="studentCourses.length > 0" class="courses-grid">
-          <div v-for="curso in studentCourses" :key="curso.id" class="course-card">
+          <div v-for="curso in studentCourses" :key="curso.id" class="course-card" @click="viewCourse(curso.id)">
             <div class="course-image">
               <img :src="curso.img" :alt="curso.nombre" />
             </div>
@@ -75,7 +75,7 @@
                 </span>
               </div>
               <div class="course-actions">
-                <button class="btn-view" @click="viewCourse(curso.id)">Ver Curso</button>
+                <button class="btn-cancel" @click.stop="cancelSubscription(curso.id)">Cancelar Suscripción</button>
               </div>
             </div>
           </div>
@@ -176,6 +176,38 @@ const deleteCourse = async (cursoId) => {
 
 const viewCourse = (cursoId) => {
   router.push(`/courses/${cursoId}`)
+}
+
+const cancelSubscription = async (cursoId) => {
+  if (!confirm('¿Estás seguro que quieres cancelar tu suscripción a este curso?')) {
+    return
+  }
+
+  try {
+    const response = await fetch('http://localhost:5000/api/usuarios/cancel-subscription', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStore.token}`
+      },
+      body: JSON.stringify({
+        courseId: cursoId
+      })
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      alert('Suscripción cancelada')
+      // Recargar los cursos
+      await loadCourses()
+    } else {
+      alert('Error al cancelar suscripción: ' + data.message)
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    alert('Error al cancelar suscripción')
+  }
 }
 </script>
 
@@ -395,7 +427,8 @@ const viewCourse = (cursoId) => {
 
 .btn-edit,
 .btn-delete,
-.btn-view {
+.btn-view,
+.btn-cancel {
   flex: 1;
   padding: 10px 16px;
   border: none;
@@ -432,6 +465,15 @@ const viewCourse = (cursoId) => {
 
 .btn-view:hover {
   background: rgba(73, 187, 189, 0.85);
+}
+
+.btn-cancel {
+  background: #ff6b6b;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #ff5252;
 }
 
 @media (max-width: 768px) {
