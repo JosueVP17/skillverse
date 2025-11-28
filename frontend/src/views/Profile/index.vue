@@ -6,7 +6,18 @@
         <p class="subtitle">Administra tu información personal</p>
       </div>
 
-      <div class="profile-content">
+      <!-- Skeleton Loader mientras carga -->
+      <div v-if="isInitialLoading" class="profile-content">
+        <div class="profile-card">
+          <v-skeleton-loader type="avatar,heading,paragraph" />
+        </div>
+        <div class="edit-form-card">
+          <v-skeleton-loader type="heading,list-item,list-item,list-item,divider,actions" />
+        </div>
+      </div>
+
+      <!-- Contenido del perfil -->
+      <div v-else class="profile-content">
         <!-- Avatar y información básica -->
         <div class="profile-card">
           <div class="profile-avatar">
@@ -206,6 +217,7 @@ import { profileService } from '@/services/profile.service'
 
 const sessionStore = useSessionStore()
 const loading = ref(false)
+const isInitialLoading = ref(true)
 const fileInput = ref(null)
 const avatarPreview = ref(null)
 const userPhoto = ref(null)
@@ -226,13 +238,13 @@ const passwordData = ref({
 
 // Cargar perfil del usuario cuando se monta el componente
 onMounted(async () => {
-  // 1. Primero mostrar foto del sessionStore si existe (carga instantánea)
-  if (sessionStore.userPhoto) {
-    userPhoto.value = sessionStore.userPhoto
-  }
-
-  // 2. Cargar datos del servidor en segundo plano
   try {
+    // 1. Primero mostrar foto del sessionStore si existe (carga instantánea)
+    if (sessionStore.userPhoto) {
+      userPhoto.value = sessionStore.userPhoto
+    }
+
+    // 2. Cargar datos del servidor en segundo plano
     const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
     const response = await profileService.getProfile(sessionStore.token, userType)
     
@@ -257,6 +269,8 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error cargando perfil:', error)
+  } finally {
+    isInitialLoading.value = false
   }
 })
 

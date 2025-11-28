@@ -58,6 +58,31 @@ export default {
             res.status(400).json({ ok: false, message: e.message })
         }
     },
+    async addComment(req, res){
+        try{
+            const userId = req.usuario.id
+            const result = await CursoService.addComment(req.params.id, userId, req.body)
+            res.status(201).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+    async removeComment(req, res){
+        try{
+            const result = await CursoService.removeComment(req.params.id, req.params.commentId)
+            res.status(201).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
+    async updateComment(req, res){
+        try{
+            const result = await CursoService.updateComment(req.params.id, req.params.commentId, req.body)
+            res.status(201).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message })
+        }
+    },
     async getAll(req,res){
         try{
             const result =  await CursoService.getAllCursos()

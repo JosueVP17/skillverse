@@ -1,8 +1,9 @@
 import express from 'express'
 import CursoController from '../controllers/curso.controller.js'
 import { verifyToken } from '../middleware/profesor.middleware.js'
+import { verifyUsuarioToken } from '../middleware/usuario.middleware.js'
 import { validate } from '../middleware/validateCurso.middleware.js'
-import { idCursoSchema, createCursoSchema, updateCursoSchema, addLeccionSchema, idCursoWithIndexSchema, updateLeccionSchema } from '../schemas/curso.schema.js'
+import { idCursoSchema, createCursoSchema, updateCursoSchema, addLeccionSchema, idCursoWithIndexSchema, updateLeccionSchema, createCommentSchema, updateCommentSchema } from '../schemas/curso.schema.js'
 
 const CursoRoutes = express.Router()
 
@@ -49,6 +50,26 @@ CursoRoutes.put(
     validate(updateLeccionSchema),
     verifyToken,
     CursoController.updateLeccion
+)
+CursoRoutes.post(
+    '/:id/comentarios',
+    validate(idCursoSchema, 'params'),
+    validate(createCommentSchema),
+    verifyUsuarioToken,
+    CursoController.addComment
+)
+CursoRoutes.delete(
+    '/:id/comentarios/:commentId',
+    validate(idCursoSchema, 'params'),
+    verifyUsuarioToken,
+    CursoController.removeComment
+)
+CursoRoutes.put(
+    '/:id/comentarios/:commentId',
+    validate(idCursoSchema, 'params'),
+    validate(updateCommentSchema),
+    verifyUsuarioToken,
+    CursoController.updateComment
 )
 CursoRoutes.get(
     '/',

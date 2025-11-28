@@ -34,4 +34,15 @@ UsuarioRoutes.get('/profile',
     UsuarioController.getProfile
 )
 
+UsuarioRoutes.get('/foto/:id',
+    validate(idUsuarioSchema, 'params'),
+    UsuarioController.getUsuarioById
+)
+
+UsuarioRoutes.get('/:id',
+    validate(idUsuarioSchema, 'params'),
+    verifyToken,
+    UsuarioController.getUsuarioById
+)
+
 export default UsuarioRoutes

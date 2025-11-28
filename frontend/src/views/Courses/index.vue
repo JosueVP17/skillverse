@@ -67,7 +67,7 @@ onMounted(() => {
 onMounted(async () =>{
 try{
     isLoading.value = true
-    const res = await fetch('http://localhost:5050/api/cursos');
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cursos`);
     const data = await res.json();
     cursos.value = data.result;
 
@@ -89,6 +89,19 @@ watch([filtroCategoria, filtroPrecio, filtroComplejidad, filtroBusqueda], () => 
     currentPage.value = 1;
 });
 
+// Mapeo de categorías antiguas a nuevas
+const categoriasMap = {
+    'programacion': 'Tecnología y Programación',
+    'diseño': 'Diseño y Creatividad (Diseño gráfico, UX/UI, 3D…)',
+    'marketing': 'Marketing y Ventas',
+    'negocios': 'Negocios y Emprendimiento',
+    'otros': 'Desarrollo Personal'
+}
+
+const normalizarCategoria = (categoria) => {
+    return categoriasMap[categoria] || categoria;
+}
+
 const cursosFiltrados = computed(() => {
     return cursos.value.filter(curso => {
         //Filtro de búsqueda
@@ -100,7 +113,7 @@ const cursosFiltrados = computed(() => {
         }
 
         //Filtro de categoría
-        if(filtroCategoria.value && curso.categoria !== filtroCategoria.value){
+        if(filtroCategoria.value && normalizarCategoria(curso.categoria) !== filtroCategoria.value){
             return false;
         }
 

@@ -3,7 +3,7 @@
         <img class="logo" src="@/assets/PageLogoDark.png" @click="$router.push('/')">
         <div class="navigation">
             <v-btn class="nav-btn" density="comfortable" variant="plain" @click="$router.push('/')">Inicio</v-btn>
-            <v-btn class="nav-btn" density="comfortable" variant="plain" @click="$router.push('/courses')" >Cursos</v-btn>
+            <v-btn class="nav-btn" density="comfortable" variant="plain" @click="$router.push('/courses')">Cursos</v-btn>
             
             <!-- Botón de Ingresar (solo si no está autenticado) -->
             <v-btn 

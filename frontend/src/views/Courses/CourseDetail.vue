@@ -1,8 +1,10 @@
 <template>
   <div class="course-detail-page">
-    <!-- Loading State -->
+    <!-- Skeleton Loader State -->
     <div v-if="!course" class="loading">
-      <p>Cargando curso...</p>
+      <div class="container">
+        <v-skeleton-loader type="image,heading,list-item-avatar-three-line,paragraph,paragraph,divider,actions" />
+      </div>
     </div>
 
     <!-- Course Content -->
@@ -161,7 +163,7 @@
           </div>
         </div>
 
-        <div class="profesor-section">
+        <div class="profesor-section" v-if="profesor">
           <h2>Profesor</h2>
           <div class="profesor-card">
             <img :src="profesor.foto" class="profesor-photo" />
@@ -175,12 +177,87 @@
 
         <!-- Reviews Section -->
         <div class="reviews-section">
-          <h2>Valoraciones</h2>
+          <h2>Valoraciones y Comentarios</h2>
           <div class="rating-summary">
             <div class="rating-score">
-              <span class="score">{{ course.rating || '4.5' }}</span>
-              <div class="stars">★★★★☆</div>
-              <span class="total-reviews">({{ course.totalReviews || '120' }} valoraciones)</span>
+              <span class="score">{{ calculateAverageRating() }}</span>
+              <div class="stars">{{ generateStars(calculateAverageRating()) }}</div>
+              <span class="total-reviews">({{ course.comentarios?.length || 0 }} valoraciones)</span>
+            </div>
+          </div>
+
+          <!-- Add Comment Form -->
+          <div class="add-comment-section">
+            <h3>Deja tu comentario</h3>
+            <div class="comment-form">
+              <div class="form-group">
+                <label>Tu valoración:</label>
+                <div class="star-rating">
+                  <button
+                    v-for="star in 5"
+                    :key="star"
+                    @click="newComment.valoracion = star"
+                    :class="{ active: star <= newComment.valoracion }"
+                    class="star-btn"
+                  >
+                    ★
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Tu comentario:</label>
+                <textarea
+                  v-model="newComment.texto"
+                  placeholder="Comparte tu experiencia con este curso..."
+                  maxlength="500"
+                />
+                <span class="char-count">{{ newComment.texto.length }}/500</span>
+              </div>
+              <div class="form-group checkbox">
+                <label>
+                  <input 
+                    v-model="newComment.anonimo" 
+                    type="checkbox"
+                  />
+                  Comentar de forma anónima
+                </label>
+              </div>
+              <button @click="submitComment" class="btn-submit-comment">Publicar Comentario</button>
+            </div>
+          </div>
+
+          <!-- Comments List -->
+          <div class="comments-list">
+            <div v-if="!comentariosConFotos || comentariosConFotos.length === 0" class="no-comments">
+              <p>Sin comentarios aún. ¡Sé el primero en comentar!</p>
+            </div>
+            <div v-else>
+              <div v-for="comentario in comentariosConFotos" :key="comentario.id" class="comment-card">
+                <div class="comment-header">
+                  <div class="user-info">
+                    <div 
+                      v-if="!comentario.anonimo && comentario.fotoUrl" 
+                      class="user-avatar user-photo"
+                    >
+                      <img :src="comentario.fotoUrl" :alt="comentario.nombreUsuario" />
+                    </div>
+                    <div v-else class="user-avatar" :class="{ 'anonymous': comentario.anonimo }">
+                      {{ comentario.anonimo ? '?' : getUserInitials(comentario.nombreUsuario || comentario.usuarioId) }}
+                    </div>
+                    <div class="user-details">
+                      <p class="user-name">{{ comentario.anonimo ? 'Anónimo' : (comentario.nombreUsuario || 'Usuario Anónimo') }}</p>
+                      <p class="comment-date">{{ formatDate(comentario.fecha) }}</p>
+                    </div>
+                  </div>
+                  <div class="comment-rating">
+                    <span class="stars">{{ generateStars(comentario.valoracion) }}</span>
+                    <span class="rating-value">{{ comentario.valoracion }}/5</span>
+                  </div>
+                </div>
+                <div class="comment-body">
+                  <p>{{ comentario.texto }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -247,12 +324,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 // STORES
 import { useUIStore } from '@/stores/ui'
+import { useSessionStore } from '@/stores/session'
 const uiStore = useUIStore()
+const sessionStore = useSessionStore()
 
 // FETCH HELPERS
 import { getCurso, getProfesor } from '@/utils/fetchCourseInfo'
@@ -263,6 +342,27 @@ const courseId = route.params.id
 const course = ref(null)
 const lessons = ref([])
 const profesor = ref(null)
+const newComment = ref({
+  texto: '',
+  valoracion: 5,
+  anonimo: false
+})
+const userPhotos = ref({}) // Cache de fotos de usuarios
+
+const preloadUserPhotos = async (comentarios) => {
+  if (!comentarios || comentarios.length === 0) return
+  
+  for (const comentario of comentarios) {
+    // Si el comentario no es anónimo y no tiene fotoUsuario, cargarla
+    if (!comentario.anonimo && comentario.usuarioId && !comentario.fotoUsuario && !userPhotos.value[comentario.usuarioId]) {
+      await getUserPhotoAsync(comentario.usuarioId)
+    }
+    // Si tiene fotoUsuario, guardarla en cache también
+    if (!comentario.anonimo && comentario.fotoUsuario && comentario.usuarioId) {
+      userPhotos.value[comentario.usuarioId] = comentario.fotoUsuario
+    }
+  }
+}
 
 onMounted(async () => {
   uiStore.setTitlePage('Courses')
@@ -279,8 +379,29 @@ onMounted(async () => {
 
     // Cargar información del profesor
     profesor.value = await getProfesor(cursoData.profesor)
-    console.log('Profesor data:', profesor.value) // DEBUG
+    
+    // Precargar fotos de usuarios en comentarios
+    await preloadUserPhotos(cursoData.comentarios)
   }
+})
+
+// Watch para limpiar el cache cuando cambie el usuario
+watch(() => sessionStore.userId, async () => {
+  // Limpiar cache de fotos cuando cambia el usuario
+  userPhotos.value = {}
+  // Recargar fotos de comentarios para la nueva cuenta
+  if (course.value?.comentarios) {
+    await preloadUserPhotos(course.value.comentarios)
+  }
+})
+
+// Computed para comentarios con fotos cargadas
+const comentariosConFotos = computed(() => {
+  if (!course.value?.comentarios) return []
+  return course.value.comentarios.map(comentario => ({
+    ...comentario,
+    fotoUrl: comentario.fotoUsuario || userPhotos.value[comentario.usuarioId] || null
+  }))
 })
 
 // Methods
@@ -329,6 +450,135 @@ const share = (platform) => {
 const copyLink = () => {
   navigator.clipboard.writeText(window.location.href)
   alert('¡Link copiado al portapapeles!')
+}
+
+const calculateAverageRating = () => {
+  if (!course.value?.comentarios || course.value.comentarios.length === 0) {
+    return 'N/A'
+  }
+  const sum = course.value.comentarios.reduce((acc, c) => acc + c.valoracion, 0)
+  const average = (sum / course.value.comentarios.length).toFixed(1)
+  return average
+}
+
+const generateStars = (rating) => {
+  if (rating === 'N/A') return '☆☆☆☆☆'
+  const fullStars = Math.floor(rating)
+  const hasHalfStar = rating % 1 !== 0
+  let stars = '★'.repeat(fullStars)
+  if (hasHalfStar) stars += '✭'
+  stars += '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0))
+  return stars
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-MX', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+const getUserInitials = (nameOrId) => {
+  if (!nameOrId) return 'U'
+  // Si tiene espacios, usa las iniciales de nombre y apellido
+  if (nameOrId.includes(' ')) {
+    const parts = nameOrId.split(' ')
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  // Si es ID, usa los primeros 2 caracteres
+  return nameOrId.substring(0, 2).toUpperCase()
+}
+
+const getUserPhotoAsync = async (usuarioId) => {
+  // Si ya está en cache, retornar
+  if (userPhotos.value[usuarioId] !== undefined) {
+    return userPhotos.value[usuarioId]
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/usuarios/foto/${usuarioId}`, {
+      method: 'GET'
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      const foto = data.result?.foto || null
+      // Guardar en cache
+      userPhotos.value[usuarioId] = foto
+      return foto
+    }
+  } catch (error) {
+    console.error('Error obteniendo foto del usuario:', error)
+  }
+
+  // Si algo falla, guardar null en cache para no intentar de nuevo
+  userPhotos.value[usuarioId] = null
+  return null
+}
+
+const getUserPhoto = (usuarioId) => {
+  // Retorna de cache (síncrona) - la foto debe estar precargada
+  return userPhotos.value[usuarioId] || null
+}
+
+const submitComment = async () => {
+  if (!newComment.value.texto.trim()) {
+    alert('Por favor escribe un comentario')
+    return
+  }
+
+  if (!sessionStore.isAuthenticated) {
+    alert('Debes estar logueado para comentar')
+    return
+  }
+
+  try {
+    const token = sessionStore.token
+    const response = await fetch(
+      `http://localhost:5000/api/cursos/${courseId}/comentarios`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          texto: newComment.value.texto,
+          valoracion: newComment.value.valoracion,
+          anonimo: newComment.value.anonimo
+        })
+      }
+    )
+
+    const data = await response.json()
+
+    if (response.ok) {
+      // Recargar curso para obtener comentarios actualizados
+      const cursoData = await getCurso(courseId)
+      if (cursoData) {
+        course.value = cursoData
+        // Precargar fotos de usuarios en comentarios
+        await preloadUserPhotos(cursoData.comentarios)
+      }
+      
+      // Limpiar formulario
+      newComment.value = {
+        texto: '',
+        valoracion: 5,
+        anonimo: false
+      }
+      alert('¡Comentario publicado!')
+    } else {
+      alert('Error al publicar comentario: ' + data.message)
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    alert('Error al publicar comentario')
+  }
 }
 </script>
 
@@ -669,12 +919,254 @@ const copyLink = () => {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
+  margin-bottom: 30px;
 }
 
 .rating-score {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+.score {
+  font-size: 36px;
+  font-weight: bold;
+  color: #4a90e2;
+}
+
+.stars {
+  font-size: 20px;
+  color: #ffc107;
+}
+
+.total-reviews {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Add Comment Section */
+.add-comment-section {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 1px solid #e9ecef;
+}
+
+.add-comment-section h3 {
+  margin-bottom: 20px;
+  color: #1a1a1a;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 8px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  color: #ffc107;
+}
+
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.2s;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.form-group.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.form-group.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.char-count {
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}
+
+.btn-submit-comment {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-submit-comment:hover {
+  background: #357abd;
+}
+
+/* Comments List */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.no-comments {
+  text-align: center;
+  padding: 40px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #999;
+}
+
+.comment-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: box-shadow 0.2s;
+}
+
+.comment-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #4a90e2;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-avatar.user-photo {
+  background: transparent;
+  overflow: hidden;
+}
+
+.user-avatar.user-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.user-avatar.anonymous {
+  background: #9c9c9c;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  margin: 0;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.comment-date {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.comment-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.comment-body {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 14px;
 }
 
 .score {
