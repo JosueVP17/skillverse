@@ -5,6 +5,14 @@ import { validate } from '../middleware/validateProfesor.middleware.js'
 import { idProfesorSchema, loginProfesorSchema, registerProfesorSchema, updateProfesorSchema } from '../schemas/profesor.schema.js'
 
 const ProfesorRoutes = express.Router()
+
+// Las rutas más específicas deben ir primero
+ProfesorRoutes.get(
+    '/profile',
+    verifyToken,
+    ProfesorController.getProfile
+)
+
 ProfesorRoutes.get(
     '/:id',
     validate(idProfesorSchema, 'params'),
@@ -38,10 +46,6 @@ ProfesorRoutes.delete(
     verifyToken,
     ProfesorController.delete
 )
-ProfesorRoutes.get(
-    '/profile',
-    verifyToken,
-    ProfesorController.getProfile
-)
+
 
 export default ProfesorRoutes
