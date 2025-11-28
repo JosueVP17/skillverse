@@ -5,50 +5,51 @@ export const useSessionStore = defineStore('session', () => {
   // Estado
   const token = ref(null)
   const payload = ref(null)
+  const cart = ref([])
 
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!payload.value)
-  
+
   // Detectar tipo de usuario desde el payload del token
   const userType = computed(() => {
     if (!payload.value) return null
     return payload.value.rol === 'profesor' ? 'teacher' : 'student'
   })
-  
+
   const isStudent = computed(() => userType.value === 'student')
-  
+
   const isTeacher = computed(() => userType.value === 'teacher')
-  
+
   const userId = computed(() => payload.value?.id || null)
-  
+
   const userName = computed(() => {
     if (!payload.value) return null
-    
+
     if (isTeacher.value) {
       // Para profesores: solo el nombre
       return payload.value.nombre
     }
-    
+
     // Para estudiantes: nombre + apellido paterno
     const nombre = payload.value.nombre || ''
     const apaterno = payload.value.apaterno || ''
-    
+
     return `${nombre} ${apaterno}`.trim()
   })
-  
+
   // Email ahora está en el token
   const userEmail = computed(() => payload.value?.email || null)
-  
+
   const userOccupation = computed(() => {
     if (isTeacher.value) {
       return payload.value?.profesor || null
     }
     return null
   })
-  
+
   const isTokenExpired = computed(() => {
     if (!payload.value?.exp) return true
-    
+
     const now = Date.now() / 1000
     return payload.value.exp < now
   })
@@ -61,10 +62,10 @@ export const useSessionStore = defineStore('session', () => {
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join(''),
       )
-      
+
       return JSON.parse(jsonPayload)
     } catch (error) {
       console.error('Error al decodificar token:', error)
@@ -72,28 +73,106 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
+  const fetchCart = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/usuarios/${userId.value}/carrito/`, {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (data.ok && data.cart) {
+        cart.value = data.cart || []
+      } else {
+        cart.value = []
+      }
+    } catch (error) {
+      console.error('Error al obtener carrito:', error)
+      cart.value = []
+    }
+  }
+
+  const addToCart = async (courseId) => {
+    await fetchCart()
+
+    if (cart.value.includes(courseId)) {
+      alert('El curso ya está en el carrito')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/usuarios/${userId.value}/carrito/${courseId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.value}`,
+          },
+          body: JSON.stringify({ courseId }),
+        },
+      )
+
+      const data = await response.json()
+
+      if (data.ok) {
+        await fetchCart()
+        alert('Curso agregado al carrito.')
+      } else {
+        console.error('Error al agregar al carrito:', data.message)
+      }
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error)
+    }
+  }
+
+  const removeFromCart = async (courseId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/usuarios/${userId.value}/carrito/${courseId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token.value}`,
+          },
+        },
+      )
+      const data = await response.json()
+      if (data.ok) {
+        await fetchCart()
+        alert('Curso eliminado del carrito.')
+      } else {
+        console.error('Error al eliminar del carrito:', data.message)
+      }
+    } catch (error) {
+      console.error('Error al eliminar del carrito:', error)
+    }
+  }
+
   // Actions
-  const setSession = (tokenString) => {
+  const setSession = async (tokenString) => {
     try {
       // Guardar token
       token.value = tokenString
-      
+
       // Decodificar payload del JWT
       const decodedPayload = decodeToken(tokenString)
-      
+
       if (!decodedPayload) {
         throw new Error('Token inválido')
       }
-      
+
       payload.value = decodedPayload
-      
+
       // Guardar en localStorage
       localStorage.setItem('token', tokenString)
-      
+
       // Detectar tipo de usuario desde el payload
       const detectedUserType = decodedPayload.rol === 'profesor' ? 'teacher' : 'student'
       localStorage.setItem('userType', detectedUserType)
-      
+
       console.log('Sesión establecida:', {
         userType: detectedUserType,
         userId: decodedPayload.id,
@@ -101,9 +180,13 @@ export const useSessionStore = defineStore('session', () => {
         userEmail: decodedPayload.email,
         isTeacher: detectedUserType === 'teacher',
         occupation: decodedPayload.profesor || null,
-        tokenExpires: new Date(decodedPayload.exp * 1000).toLocaleString()
+        tokenExpires: new Date(decodedPayload.exp * 1000).toLocaleString(),
       })
-      
+
+      if (isStudent.value) {
+        await fetchCart()
+      }
+
       return true
     } catch (error) {
       console.error('Error al establecer sesión:', error)
@@ -111,32 +194,32 @@ export const useSessionStore = defineStore('session', () => {
       return false
     }
   }
-  
+
   const clearSession = () => {
     token.value = null
     payload.value = null
-    
+
     localStorage.removeItem('token')
     localStorage.removeItem('userType')
     localStorage.removeItem('rememberMe')
   }
-  
-  const restoreSession = () => {
+
+  const restoreSession = async () => {
     try {
       const storedToken = localStorage.getItem('token')
-      
+
       if (!storedToken) {
         return false
       }
-      
+
       // Decodificar token
       const decodedPayload = decodeToken(storedToken)
-      
+
       if (!decodedPayload) {
         clearSession()
         return false
       }
-      
+
       // Verificar si el token expiró
       if (decodedPayload.exp) {
         const now = Date.now() / 1000
@@ -146,23 +229,27 @@ export const useSessionStore = defineStore('session', () => {
           return false
         }
       }
-      
+
       // Restaurar sesión
       token.value = storedToken
       payload.value = decodedPayload
-      
+
       // Detectar tipo de usuario desde el payload
       const detectedUserType = decodedPayload.rol === 'profesor' ? 'teacher' : 'student'
       localStorage.setItem('userType', detectedUserType)
-      
+
       console.log('Sesión restaurada:', {
         userType: detectedUserType,
         userId: decodedPayload.id,
         userName: decodedPayload.nombre,
         userEmail: decodedPayload.email,
-        isTeacher: detectedUserType === 'teacher'
+        isTeacher: detectedUserType === 'teacher',
       })
-      
+
+      if (isStudent.value) {
+        await fetchCart()
+      }
+
       return true
     } catch (error) {
       console.error('Error al restaurar sesión:', error)
@@ -187,7 +274,8 @@ export const useSessionStore = defineStore('session', () => {
     // State
     token,
     payload,
-    
+    cart,
+
     // Getters
     isAuthenticated,
     isStudent,
@@ -198,11 +286,13 @@ export const useSessionStore = defineStore('session', () => {
     userEmail,
     userOccupation,
     isTokenExpired,
-    
+
     // Actions
+    addToCart,
+    removeFromCart,
     setSession,
     clearSession,
     restoreSession,
-    startExpirationCheck
+    startExpirationCheck,
   }
 })

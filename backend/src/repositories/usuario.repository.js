@@ -1,4 +1,4 @@
-import { db } from '../config/firebase.js'
+import { db, admin } from '../config/firebase.js'
 
 const COLLECTION = 'usuarios'
 
@@ -44,5 +44,23 @@ export default {
             comentarios: admin.firestore.FieldValue.arrayRemove(commentId)
         })
         return {id}
+    },
+
+    async getCart(id){
+        return (await this.findById(id))?.carrito || []
+    },
+
+    async addToCart(id, courseId){
+        await db.collection(COLLECTION).doc(id).update({
+            carrito: admin.firestore.FieldValue.arrayUnion(courseId)
+        })
+        return { id }
+    },
+
+    async removeFromCart(id, courseId){
+        await db.collection(COLLECTION).doc(id).update({
+            carrito: admin.firestore.FieldValue.arrayRemove(courseId)
+        })
+        return { id }
     }
 }

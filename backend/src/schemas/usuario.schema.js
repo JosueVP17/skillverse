@@ -34,3 +34,8 @@ export const updateUsuarioSchema = z.object({
 export const idUsuarioSchema = z.object({
     id: z.uuid()
 })
+
+export const idUsuarioWithCourseIdSchema = z.object({
+    id: z.uuid(),
+    courseId: z.uuid()
+})

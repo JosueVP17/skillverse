@@ -14,7 +14,7 @@ export default{
         try{
             const result = await UsuarioService.updateUsuario(req.params.id, req.body)
             res.status(201).json({ ok: true, result })
-        }catch(e){
+        } catch(e){
             res.status(400).json({ ok: false, message: e.message })
         }
     },
@@ -23,7 +23,7 @@ export default{
         try{
             const result = await UsuarioService.deleteUsuario(req.params.id)
             res.status(201).json({ok: true, result})
-        }catch(e){
+        } catch(e){
             res.status(400).json({ok: false, message: e.message })
         }
     },
@@ -33,7 +33,7 @@ export default{
             const { email, password } = req.body
             const token = await UsuarioService.login(email, password)
             res.status(200).json({ok: true, token})
-        }catch(e){
+        } catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
     },
@@ -44,7 +44,7 @@ export default{
             await UsuarioService.logout(id)
             
             res.status(200).json({message: "Cerrado de sesión exitoso."}) 
-        }catch(e){
+        } catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
     },
@@ -62,7 +62,7 @@ export default{
         try{
             const result = await UsuarioService.removeCommentFromUser(req.params.id, req.body.commentId)
             res.status(200).json({ ok: true, result })
-        }catch(e){
+        } catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
     },
@@ -70,6 +70,33 @@ export default{
     async buyCourseUser(req,res){
         try{
             const result = await UsuarioService.buyCourse(req.params.id, req.body.courseId)
+            res.status(200).json({ ok: true, result })
+        } catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
+    },
+
+    async getCart(req,res){
+        try{
+            const cart = await UsuarioService.getCart(req.params.id)
+            res.status(200).json({ ok: true, cart })
+        } catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
+    },
+
+    async addToCartUser(req, res){
+        try{
+            const result = await UsuarioService.addToCart(req.params.id, req.params.courseId)
+            res.status(200).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
+    },
+
+    async removeFromCartUser(req,res){
+        try{
+            const result = await UsuarioService.removeFromCart(req.params.id, req.params.courseId)
             res.status(200).json({ ok: true, result })
         }catch(e){
             res.status(400).json({ ok: false, message: e.message})

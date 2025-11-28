@@ -68,7 +68,7 @@
             <div class="price">
               <span class="current-price">${{ course.precio }} MXN</span>
             </div>
-            <button class="btn-buy" @click="handleBuy">Comprar Ahora</button>
+            <button class="btn-buy" @click="addToCart">Agregar al carrito</button>
           </div>
 
           <!-- Share Section -->
@@ -249,6 +249,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useSessionStore } from '@/stores/session'
 
 // STORES
 import { useUIStore } from '@/stores/ui'
@@ -283,8 +284,18 @@ onMounted(async () => {
 })
 
 // Methods
-const handleBuy = () => {
-  alert('Procesando compra...')
+const addToCart = () => {
+  const sessionStore = useSessionStore()
+  if (!sessionStore.isAuthenticated) {
+    alert('Por favor, inicia sesión para comprar el curso.')
+    return
+  }
+  if (!sessionStore.isStudent) {
+    alert('Solo los estudiantes pueden comprar cursos.')
+    return
+  }
+
+  sessionStore.addToCart(course.value.id)
 }
 
 const share = (platform) => {

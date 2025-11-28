@@ -87,5 +87,20 @@ export default {
     async removeCommentFromUser(id, commentId){
         await UsuarioRepository.removeComment(id, commentId)
         return {id, commentId}
+    },
+
+    async getCart(id){
+        const carrito =  await UsuarioRepository.getCart(id)
+        return carrito
+    },
+
+    async addToCart(id, courseId){
+        await UsuarioRepository.addToCart(id, courseId)
+        return { id, courseId }
+    },
+
+    async removeFromCart(id, courseId){
+        await UsuarioRepository.removeFromCart(id, courseId)
+        return { id, courseId }
     }
 }
