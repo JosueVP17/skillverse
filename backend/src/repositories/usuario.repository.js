@@ -62,5 +62,9 @@ export default {
             carrito: admin.firestore.FieldValue.arrayRemove(courseId)
         })
         return { id }
+    },
+
+    async getPurchasedCourses(id){
+        return (await this.findById(id))?.cursosComprados || []
     }
 }

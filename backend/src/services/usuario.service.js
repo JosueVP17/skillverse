@@ -102,5 +102,10 @@ export default {
     async removeFromCart(id, courseId){
         await UsuarioRepository.removeFromCart(id, courseId)
         return { id, courseId }
+    },
+
+    async getPurchasedCourses(id){
+        const cursosComprados = await UsuarioRepository.getPurchasedCourses(id)
+        return cursosComprados
     }
 }

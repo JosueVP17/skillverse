@@ -47,4 +47,10 @@ UsuarioRoutes.delete('/:id/carrito/:courseId',
     UsuarioController.removeFromCartUser
 )
 
+UsuarioRoutes.get('/:id/cursos-comprados',
+    validate(idUsuarioSchema, 'params'),
+    verifyToken,
+    UsuarioController.getPurchasedCourses
+)
+
 export default UsuarioRoutes

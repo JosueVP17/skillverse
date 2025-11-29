@@ -6,6 +6,7 @@ export const useSessionStore = defineStore('session', () => {
   const token = ref(null)
   const payload = ref(null)
   const cart = ref([])
+  const purchasedCourses = ref([])
 
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!payload.value)
@@ -92,6 +93,31 @@ export const useSessionStore = defineStore('session', () => {
       console.error('Error al obtener carrito:', error)
       cart.value = []
     }
+  }
+
+  const fetchPurchasedCourses = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/usuarios/${userId.value}/cursos-comprados`, {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (data.ok && data.courses) {
+        purchasedCourses.value = data.courses || []
+      } else {
+        purchasedCourses.value = []
+      }
+    } catch (error) {
+      console.error('Error al obtener cursos comprados:', error)
+      purchasedCourses.value = []
+    }
+  }
+
+  const hasPurchasedCourse = (courseId) => {
+    return purchasedCourses.value.includes(courseId)
   }
 
   const addToCart = async (courseId) => {
@@ -185,6 +211,7 @@ export const useSessionStore = defineStore('session', () => {
 
       if (isStudent.value) {
         await fetchCart()
+        await fetchPurchasedCourses()
       }
 
       return true
@@ -248,6 +275,7 @@ export const useSessionStore = defineStore('session', () => {
 
       if (isStudent.value) {
         await fetchCart()
+        await fetchPurchasedCourses()
       }
 
       return true
@@ -275,6 +303,7 @@ export const useSessionStore = defineStore('session', () => {
     token,
     payload,
     cart,
+    purchasedCourses,
 
     // Getters
     isAuthenticated,
@@ -290,6 +319,8 @@ export const useSessionStore = defineStore('session', () => {
     // Actions
     addToCart,
     fetchCart,
+    fetchPurchasedCourses,
+    hasPurchasedCourse,
     removeFromCart,
     setSession,
     clearSession,

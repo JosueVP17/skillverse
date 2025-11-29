@@ -101,5 +101,14 @@ export default{
         }catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
+    },
+
+    async getPurchasedCourses(req, res){
+        try{
+            const courses = await UsuarioService.getPurchasedCourses(req.params.id)
+            res.status(200).json({ ok: true, courses })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
     }
 }
