@@ -27,14 +27,14 @@ export default {
 
     async buyCourse(id, courseId){
         await db.collection(COLLECTION).doc(id).update({
-            cursosComprados: admin.firestore.arrayUnion(courseId)
+            cursosComprados: admin.firestore.FieldValue.arrayUnion(courseId)
         })
         return { id }
     },
 
     async addComment(id,commentId){
         await db.collection(COLLECTION).doc(id).update({
-            cursosComprados:admin.firestore.arrayUnion(commentId)
+            cursosComprados: admin.firestore.FieldValue.arrayUnion(commentId)
         })
         return {id}
     },

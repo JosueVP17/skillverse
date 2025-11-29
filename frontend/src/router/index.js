@@ -29,6 +29,21 @@ const router = createRouter({
           name: 'cart',
           component: () => import('@/views/Payment/ShoppingCart.vue'),
         },
+        {
+          path: 'pago-exitoso',
+          name: 'payment-success',
+          component: () => import('@/views/Payment/PaymentSuccess.vue'),
+        },
+        {
+          path: 'carrito',
+          name: 'carrito',
+          component: () => import('@/views/Payment/ShoppingCart.vue'),
+        },
+        {
+          path: 'pago-cancelado',
+          name: 'payment-cancelled',
+          component: () => import('@/views/Payment/PaymentCancelled.vue'),
+        },
       ],
     },
     // Seccion Auth (Login y Register)

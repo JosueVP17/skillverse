@@ -145,8 +145,10 @@
               </div>
             </div>
 
-            <button @click="proceedToCheckout" class="btn-checkout">
+            <button @click="proceedToCheckout" class="btn-checkout" :disabled="processingPayment">
+              <div v-if="processingPayment" class="spinner-small"></div>
               <svg
+                v-else
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
@@ -158,7 +160,7 @@
                 <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
                 <line x1="1" y1="10" x2="23" y2="10" />
               </svg>
-              Proceder al pago
+              {{ processingPayment ? 'Procesando...' : 'Proceder al pago' }}
             </button>
 
             <div class="security-note">
@@ -264,12 +266,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
+import { renderStripeProcess } from '@/utils/stripeProcess'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
 
 const cartItems = ref([])
 const loading = ref(true)
+const processingPayment = ref(false)
 
 // Computed
 const subtotal = computed(() => {
@@ -318,7 +322,6 @@ const loadCartItems = async () => {
     const courses = await Promise.all(coursesPromises)
 
     // Filtrar cursos nulos (por si alguno falló)
-    console.log('Cursos en el carrito:', cartIds) // Debugging
     cartItems.value = courses.filter((course) => course !== null)
   } catch (error) {
     console.error('Error al cargar items del carrito:', error)
@@ -342,9 +345,16 @@ const removeItem = async (courseId) => {
   }
 }
 
-const proceedToCheckout = () => {
-  alert('Procesando pago de $' + total.value.toFixed(2) + ' MXN')
-  // TODO: Implementar proceso de pago
+const proceedToCheckout = async () => {
+  if (processingPayment.value) return
+  
+  try {
+    processingPayment.value = true
+    await renderStripeProcess(sessionStore.userId)
+  } catch (error) {
+    processingPayment.value = false
+    alert('Error al procesar el pago: ' + error.message)
+  }
 }
 
 const goBack = () => {
@@ -741,6 +751,21 @@ onMounted(async () => {
 .benefits-list li svg {
   color: #49bbbd;
   flex-shrink: 0;
+}
+
+/* Spinner para el botón */
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.btn-checkout:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* Responsive */
