@@ -70,7 +70,25 @@
             <div class="price">
               <span class="current-price">${{ course.precio }} MXN</span>
             </div>
-            <button class="btn-buy" @click="handleBuy">Comprar Ahora</button>
+            <button 
+              v-if="sessionStore.hasPurchasedCourse(course.id)" 
+              class="btn-purchased"
+              @click="goToMyCourses"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Ver en mis cursos
+            </button>
+            <button v-else class="btn-buy" @click="addToCart">Agregar al carrito</button>
           </div>
 
           <!-- Share Section -->
@@ -143,7 +161,8 @@
             <li>✓ Acceso de por vida</li>
             <li>✓ Certificado de finalización</li>
             <li>✓ Acceso en todos los dispositivos</li>
-            <li>✓ Material descargable</li>
+            <li>✓ Garantía de 30 días</li>
+            <li>✓ Soporte 24/7</li>
           </ul>
         </div>
 
@@ -325,13 +344,13 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-// STORES
-import { useUIStore } from '@/stores/ui'
+import { useRoute, useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
+import { useUIStore } from '@/stores/ui'
+
 const uiStore = useUIStore()
 const sessionStore = useSessionStore()
+const router = useRouter()
 
 // FETCH HELPERS
 import { getCurso, getProfesor } from '@/utils/fetchCourseInfo'
@@ -405,6 +424,23 @@ const comentariosConFotos = computed(() => {
 })
 
 // Methods
+const addToCart = () => {
+  if (!sessionStore.isAuthenticated) {
+    alert('Por favor, inicia sesión para comprar el curso.')
+    return
+  }
+  if (!sessionStore.isStudent) {
+    alert('Solo los estudiantes pueden comprar cursos.')
+    return
+  }
+
+  sessionStore.addToCart(course.value.id)
+}
+
+const goToMyCourses = () => {
+  router.push('/teacher-courses') 
+}
+
 const getProfesorFullName = (prof) => {
   if (!prof) return 'Profesor'
   
@@ -726,10 +762,35 @@ const submitComment = async () => {
   cursor: pointer;
   transition: background 0.3s;
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-buy:hover {
   background: rgba(73, 187, 189, 0.8);
+}
+
+.btn-purchased {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-purchased:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
 }
 
 .share-section {

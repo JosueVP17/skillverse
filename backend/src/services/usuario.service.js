@@ -95,6 +95,26 @@ export default {
         return {id, commentId}
     },
 
+    async getCart(id){
+        const carrito =  await UsuarioRepository.getCart(id)
+        return carrito
+    },
+
+    async addToCart(id, courseId){
+        await UsuarioRepository.addToCart(id, courseId)
+        return { id, courseId }
+    },
+
+    async removeFromCart(id, courseId){
+        await UsuarioRepository.removeFromCart(id, courseId)
+        return { id, courseId }
+    },
+
+    async getPurchasedCourses(id){
+        const cursosComprados = await UsuarioRepository.getPurchasedCourses(id)
+        return cursosComprados
+    },
+
     async getUsuario(id){
         const usuario = await UsuarioRepository.findById(id)
         if(!usuario) throw new Error('Usuario no encontrado')

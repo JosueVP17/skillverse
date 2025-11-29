@@ -6,6 +6,7 @@ export default class UsuarioModel extends UsuarioInterface {
         this.activeToken = null
         this.cursosComprados = this.cursosComprados || []
         this.comentarios = this.comentarios || []
+        this.carrito = this.carrito || []
     }
 
     toJSON() {
