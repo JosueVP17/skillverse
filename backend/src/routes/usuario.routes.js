@@ -51,6 +51,8 @@ UsuarioRoutes.get('/:id/cursos-comprados',
     validate(idUsuarioSchema, 'params'),
     verifyToken,
     UsuarioController.getPurchasedCourses
+)
+
 UsuarioRoutes.get('/profile',
     verifyToken,
     UsuarioController.getProfile

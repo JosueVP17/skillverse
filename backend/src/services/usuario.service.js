@@ -113,6 +113,8 @@ export default {
     async getPurchasedCourses(id){
         const cursosComprados = await UsuarioRepository.getPurchasedCourses(id)
         return cursosComprados
+    },
+
     async getUsuario(id){
         const usuario = await UsuarioRepository.findById(id)
         if(!usuario) throw new Error('Usuario no encontrado')

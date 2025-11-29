@@ -121,19 +121,19 @@
                     ></v-list-item>
                 </v-list>
             </v-menu>
-          <v-btn icon @click="$router.push('/cart')">
-            <v-icon>mdi-cart</v-icon>
-            <v-badge
-              v-if="sessionStore.cart.length > 0"
-              :content="sessionStore.cart.length"
-              color="red"
-              overlap
-              bordered
-            ></v-badge>
-          </v-btn>
+
+            <v-btn icon @click="$router.push('/cart')">
+              <v-icon>mdi-cart</v-icon>
+              <v-badge
+                v-if="sessionStore.cart.length > 0"
+                :content="sessionStore.cart.length"
+                color="red"
+                overlap
+                bordered
+              ></v-badge>
+            </v-btn>
         </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -169,11 +169,7 @@ const goToProfile = () => {
 }
 
 const goToMyCourses = () => {
-  if (sessionStore.isTeacher) {
-    router.push({ name: 'teacher-courses' })
-  } else {
-    router.push({ name: 'my-courses' })
-  }
+  router.push({ name: 'my-courses' })
 }
 
 const goToSettings = () => {

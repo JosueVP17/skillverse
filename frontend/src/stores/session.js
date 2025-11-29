@@ -237,7 +237,7 @@ export const useSessionStore = defineStore('session', () => {
     userPhoto.value = photo
   }
   
-  const restoreSession = () => {
+  const restoreSession = async () => {
     try {
       const storedToken = localStorage.getItem('token')
 

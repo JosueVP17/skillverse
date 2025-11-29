@@ -346,11 +346,8 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
-import { useRoute } from 'vue-router'
-
-// STORES
 import { useUIStore } from '@/stores/ui'
-import { useSessionStore } from '@/stores/session'
+
 const uiStore = useUIStore()
 const sessionStore = useSessionStore()
 const router = useRouter()

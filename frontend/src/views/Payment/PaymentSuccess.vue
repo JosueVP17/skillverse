@@ -152,7 +152,7 @@ const verifyPayment = async () => {
 }
 
 const goToMyCourses = () => {
-  router.push('/lectures')
+  router.push('/teacher-courses')
 }
 
 const goToCart = () => {
