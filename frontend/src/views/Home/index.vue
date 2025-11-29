@@ -7,8 +7,8 @@
                 <p>Skillverse es una plataforma interesante que te ense&ntilde;ara de una forma mucho mas interactiva.</p>
                 <div class="join-box">
                     <v-btn class="join-btn" rounded="xl" density="comfortable" variant="tonal" @click="$router.push('/auth')" >Unete Gratis</v-btn>
-                    <v-btn class="ma-2" style="margin-right: 15px !important" color="white" icon="mdi-play" variant="flat"></v-btn>
-                    <p>Ver como funciona</p>
+                    <v-btn class="ma-2" style="margin-right: 15px !important" color="white" icon="mdi-play" variant="flat" @click="$router.push('/courses') " ></v-btn>
+                    <p>Comienza a explorar.</p>
                 </div>
             </div>
             <div class="header-img">

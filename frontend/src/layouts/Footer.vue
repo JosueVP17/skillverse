@@ -9,10 +9,24 @@
         <div class="footer-contact">
             <p>Suscribete para recibir nuestras ofertas</p>
             <div class="footer-input">
-                <v-text-field class="input-text" color="grey-darken-2" rounded="xl" variant="outlined"
-                    placeholder="E-mail" :focused="true"></v-text-field>
-                <v-btn class="footer-btn" color="teal-lighten-2" rounded="xl" density="comfortable"
-                    variant="flat">Suscribirse</v-btn>
+                <v-text-field 
+                    v-model="email"
+                    class="input-text" 
+                    color="grey-darken-2" 
+                    rounded="xl" 
+                    variant="outlined"
+                    placeholder="E-mail" 
+                    :focused="true"
+                    type="email"
+                ></v-text-field>
+                <v-btn 
+                    class="footer-btn" 
+                    color="teal-lighten-2" 
+                    rounded="xl" 
+                    density="comfortable"
+                    variant="flat"
+                    @click="handleSubscribe"
+                >Suscribirse</v-btn>
             </div>
         </div>
 
@@ -28,7 +42,25 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 
+const email = ref('')
+
+const handleSubscribe = () => {
+    if (!email.value) {
+        alert('Por favor ingresa un correo electrónico')
+        return
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.value)) {
+        alert('Por favor ingresa un correo electrónico válido')
+        return
+    }
+    
+    alert(`¡Gracias por suscribirte! Te enviaremos nuestras ofertas a ${email.value}`)
+    email.value = ''
+}
 </script>
 
 <style lang="scss" scoped>

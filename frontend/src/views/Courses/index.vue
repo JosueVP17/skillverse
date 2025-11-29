@@ -9,11 +9,13 @@
     </div>
 
     <div class="course-list">
-        <div v-if="isLoading" class="loading-message">
-            <div v-for="n in 3" :key="'skeleton-' + n" class="course-card skeleton">
-                <v-skeleton-loader type="image,list-item-three-line,divider,actions"></v-skeleton-loader>
+        <div v-if="isLoading" class="loading-container">
+            <div v-for="n in 6" :key="'skeleton-' + n" class="course-card-skeleton">
+                <v-skeleton-loader 
+                    type="image, article, actions"
+                    :elevation="2"
+                ></v-skeleton-loader>
             </div>
-            
         </div>
         <template v-else>
             <CourseCard
@@ -169,7 +171,7 @@ const resetSearch = () => {
 
 //Paginación
 const currentPage = ref(1);
-const perPage = 6;
+const perPage = 8;
 
 const cursosPaginados = computed(() => {
     const start = (currentPage.value - 1) * perPage;
@@ -199,14 +201,20 @@ const handleCourseClick = (courseId) => {
         padding: 0 12px;
     }
 
-    .loading-message {
+    .loading-container {
         display: flex;
+        gap: 2vw;
+        flex-wrap: wrap;
         justify-content: center;
-        align-items: center;
         width: 100%;
-        min-height: 500px;
-        font-size: 16px;
-        color: #696983;
+        padding: 0 12px;
+    }
+
+    .course-card-skeleton {
+        width: 350px;
+        max-width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
     }
 
     @media (max-width: 1024px) {
@@ -217,6 +225,15 @@ const handleCourseClick = (courseId) => {
         .course-list {
             gap: 16px;
             padding: 0 16px;
+        }
+
+        .loading-container {
+            gap: 16px;
+            padding: 0 16px;
+        }
+
+        .course-card-skeleton {
+            width: calc(50% - 8px);
         }
     }
 
@@ -230,6 +247,15 @@ const handleCourseClick = (courseId) => {
         .course-list {
             gap: 12px;
             padding: 0 12px;
+        }
+
+        .loading-container {
+            gap: 12px;
+            padding: 0 12px;
+        }
+
+        .course-card-skeleton {
+            width: 100%;
         }
     }
 
@@ -246,10 +272,13 @@ const handleCourseClick = (courseId) => {
             min-height: 300px;
         }
 
-        .loading-message {
-            min-height: 300px;
-            font-size: 14px;
+        .loading-container {
+            gap: 10px;
+            padding: 0 8px;
+        }
+
+        .course-card-skeleton {
+            width: 100%;
         }
     }
-
 </style>
