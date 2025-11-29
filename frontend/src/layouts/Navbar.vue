@@ -169,7 +169,8 @@ const goToProfile = () => {
 }
 
 const goToMyCourses = () => {
-  router.push({ name: 'my-courses' })
+    router.push({ name: 'teacher-courses' })
+
 }
 
 const goToSettings = () => {
