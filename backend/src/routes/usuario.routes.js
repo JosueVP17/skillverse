@@ -51,6 +51,20 @@ UsuarioRoutes.get('/:id/cursos-comprados',
     validate(idUsuarioSchema, 'params'),
     verifyToken,
     UsuarioController.getPurchasedCourses
+UsuarioRoutes.get('/profile',
+    verifyToken,
+    UsuarioController.getProfile
+)
+
+UsuarioRoutes.get('/foto/:id',
+    validate(idUsuarioSchema, 'params'),
+    UsuarioController.getUsuarioById
+)
+
+UsuarioRoutes.get('/:id',
+    validate(idUsuarioSchema, 'params'),
+    verifyToken,
+    UsuarioController.getUsuarioById
 )
 
 export default UsuarioRoutes

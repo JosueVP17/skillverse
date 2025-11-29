@@ -7,6 +7,7 @@ export const useSessionStore = defineStore('session', () => {
   const payload = ref(null)
   const cart = ref([])
   const purchasedCourses = ref([])
+  const userPhoto = ref(null)
 
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!payload.value)
@@ -225,13 +226,18 @@ export const useSessionStore = defineStore('session', () => {
   const clearSession = () => {
     token.value = null
     payload.value = null
-
+    userPhoto.value = null
+    
     localStorage.removeItem('token')
     localStorage.removeItem('userType')
     localStorage.removeItem('rememberMe')
   }
 
-  const restoreSession = async () => {
+  const setUserPhoto = (photo) => {
+    userPhoto.value = photo
+  }
+  
+  const restoreSession = () => {
     try {
       const storedToken = localStorage.getItem('token')
 
@@ -304,7 +310,8 @@ export const useSessionStore = defineStore('session', () => {
     payload,
     cart,
     purchasedCourses,
-
+    userPhoto,
+    
     // Getters
     isAuthenticated,
     isStudent,
@@ -324,6 +331,7 @@ export const useSessionStore = defineStore('session', () => {
     removeFromCart,
     setSession,
     clearSession,
+    setUserPhoto,
     restoreSession,
     startExpirationCheck,
   }

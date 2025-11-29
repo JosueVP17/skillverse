@@ -110,5 +110,25 @@ export default{
         }catch(e){
             res.status(400).json({ ok: false, message: e.message})
         }
+    },
+
+    async getProfile(req,res){
+        try{
+            const id = req.usuario.id
+            const result = await UsuarioService.getUsuario(id)
+            res.status(200).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
+    },
+
+    async getUsuarioById(req,res){
+        try{
+            const { id } = req.params
+            const result = await UsuarioService.getUsuario(id)
+            res.status(200).json({ ok: true, result })
+        }catch(e){
+            res.status(400).json({ ok: false, message: e.message})
+        }
     }
 }

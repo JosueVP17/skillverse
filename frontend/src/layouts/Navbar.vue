@@ -1,127 +1,137 @@
 <template>
-  <div class="navbar">
-    <img class="logo" src="@/assets/PageLogoDark.png" @click="$router.push('/')" />
-    <div class="navigation">
-      <v-btn class="nav-btn" density="comfortable" variant="plain">Inicio</v-btn>
-      <v-btn class="nav-btn" density="comfortable" variant="plain">Cursos</v-btn>
+    <div class="navbar">
+        <img class="logo" src="@/assets/PageLogoDark.png" @click="$router.push('/')">
+        <div class="navigation">
+            <v-btn class="nav-btn" density="comfortable" variant="plain" @click="$router.push('/')">Inicio</v-btn>
+            <v-btn class="nav-btn" density="comfortable" variant="plain" @click="$router.push('/courses')">Cursos</v-btn>
+            
+            <!-- Botón de Ingresar (solo si no está autenticado) -->
+            <v-btn 
+                v-if="!sessionStore.isAuthenticated" 
+                class="nav-btn login-btn" 
+                rounded="xl" 
+                density="comfortable" 
+                variant="tonal"
+                color="teal-lighten-1"
+                @click="$router.push('/auth')"
+            >
+                Ingresar
+            </v-btn>
 
-      <!-- Botón de Ingresar (solo si no está autenticado) -->
-      <v-btn
-        v-if="!sessionStore.isAuthenticated"
-        class="nav-btn login-btn"
-        rounded="xl"
-        density="comfortable"
-        variant="tonal"
-        color="teal-lighten-1"
-        @click="$router.push('/auth')"
-      >
-        Ingresar
-      </v-btn>
+            <!-- Menú de Usuario (solo si está autenticado) -->
+            <v-menu v-else>
+                <template v-slot:activator="{ props }">
+                    <v-btn
+                        class="user-btn"
+                        color="teal-lighten-1"
+                        rounded="xl"
+                        variant="tonal"
+                        v-bind="props"
+                        append-icon="mdi-chevron-down"
+                    >
+                        <v-avatar size="24" class="me-2">
+                            <img v-if="sessionStore.userPhoto" :src="sessionStore.userPhoto" alt="Avatar" />
+                            <v-icon v-else size="18">mdi-account-circle</v-icon>
+                        </v-avatar>
+                        <span class="user-name">{{ sessionStore.userName }}</span>
+                    </v-btn>
+                </template>
 
-      <!-- Menú de Usuario (solo si está autenticado) -->
-      <v-menu v-else>
-        <template v-slot:activator="{ props }">
-          <v-btn
-            class="user-btn"
-            color="teal-lighten-1"
-            rounded="xl"
-            variant="tonal"
-            v-bind="props"
-            append-icon="mdi-chevron-down"
-          >
-            <v-icon start size="20">mdi-account-circle</v-icon>
-            <span class="user-name">{{ sessionStore.userName }}</span>
+                <v-list class="user-menu">
+                    <!-- Información del usuario -->
+                    <v-list-item class="user-info">
+                        <template v-slot:prepend>
+                            <v-avatar color="teal-lighten-1" size="48">
+                                <img v-if="sessionStore.userPhoto" :src="sessionStore.userPhoto" alt="Avatar" />
+                                <v-icon v-else size="32">mdi-account-circle</v-icon>
+                            </v-avatar>
+                        </template>
+                        
+                        <v-list-item-title class="font-weight-bold">
+                            {{ sessionStore.userName }}
+                        </v-list-item-title>
+                        
+                        <v-list-item-subtitle>
+                            {{ sessionStore.userEmail }}
+                        </v-list-item-subtitle>
+                        
+                        <template v-slot:append>
+                            <v-chip 
+                                v-if="sessionStore.isTeacher" 
+                                color="teal" 
+                                size="small"
+                                variant="flat"
+                            >
+                                Profesor
+                            </v-chip>
+                            <v-chip 
+                                v-else 
+                                color="blue" 
+                                size="small"
+                                variant="flat"
+                            >
+                                Estudiante
+                            </v-chip>
+                        </template>
+                    </v-list-item>
+
+                    <v-divider></v-divider>
+
+                    <!-- Especialización (solo para profesores) -->
+                    <v-list-item 
+                        v-if="sessionStore.isTeacher && sessionStore.userOccupation"
+                        prepend-icon="mdi-school"
+                        class="occupation-item"
+                    >
+                        <v-list-item-title class="text-body-2">
+                            {{ sessionStore.userOccupation }}
+                        </v-list-item-title>
+                    </v-list-item>
+
+                    <v-divider v-if="sessionStore.isTeacher"></v-divider>
+
+                    <!-- Opciones del menú -->
+                    <v-list-item
+                        prepend-icon="mdi-account"
+                        title="Mi Perfil"
+                        @click="goToProfile"
+                    ></v-list-item>
+
+                    <v-list-item
+                        v-if="sessionStore.isTeacher"
+                        prepend-icon="mdi-book-open-variant"
+                        title="Mis Cursos"
+                        @click="goToMyCourses"
+                    ></v-list-item>
+
+                    <v-list-item
+                        v-else
+                        prepend-icon="mdi-book-multiple"
+                        title="Mis Cursos"
+                        @click="goToMyCourses"
+                    ></v-list-item>
+
+                    <v-divider></v-divider>
+
+                    <v-list-item
+                        prepend-icon="mdi-logout"
+                        title="Cerrar Sesión"
+                        class="logout-item"
+                        @click="handleLogout"
+                    ></v-list-item>
+                </v-list>
+            </v-menu>
+          <v-btn icon @click="$router.push('/cart')">
+            <v-icon>mdi-cart</v-icon>
+            <v-badge
+              v-if="sessionStore.cart.length > 0"
+              :content="sessionStore.cart.length"
+              color="red"
+              overlap
+              bordered
+            ></v-badge>
           </v-btn>
-        </template>
-
-        <v-list class="user-menu">
-          <!-- Información del usuario -->
-          <v-list-item class="user-info">
-            <template v-slot:prepend>
-              <v-avatar color="teal-lighten-1" size="48">
-                <v-icon size="32">mdi-account-circle</v-icon>
-              </v-avatar>
-            </template>
-
-            <v-list-item-title class="font-weight-bold">
-              {{ sessionStore.userName }}
-            </v-list-item-title>
-
-            <v-list-item-subtitle>
-              {{ sessionStore.userEmail }}
-            </v-list-item-subtitle>
-
-            <template v-slot:append>
-              <v-chip v-if="sessionStore.isTeacher" color="teal" size="small" variant="flat">
-                Profesor
-              </v-chip>
-              <v-chip v-else color="blue" size="small" variant="flat"> Estudiante </v-chip>
-            </template>
-          </v-list-item>
-
-          <v-divider></v-divider>
-
-          <!-- Especialización (solo para profesores) -->
-          <v-list-item
-            v-if="sessionStore.isTeacher && sessionStore.userOccupation"
-            prepend-icon="mdi-school"
-            class="occupation-item"
-          >
-            <v-list-item-title class="text-body-2">
-              {{ sessionStore.userOccupation }}
-            </v-list-item-title>
-          </v-list-item>
-
-          <v-divider v-if="sessionStore.isTeacher"></v-divider>
-
-          <!-- Opciones del menú -->
-          <v-list-item
-            prepend-icon="mdi-account"
-            title="Mi Perfil"
-            @click="goToProfile"
-          ></v-list-item>
-
-          <v-list-item
-            v-if="sessionStore.isTeacher"
-            prepend-icon="mdi-book-open-variant"
-            title="Mis Cursos"
-            @click="goToMyCourses"
-          ></v-list-item>
-
-          <v-list-item
-            v-else
-            prepend-icon="mdi-book-multiple"
-            title="Mis Cursos"
-            @click="goToMyCourses"
-          ></v-list-item>
-
-          <v-list-item
-            prepend-icon="mdi-cog"
-            title="Configuración"
-            @click="goToSettings"
-          ></v-list-item>
-
-          <v-divider></v-divider>
-
-          <v-list-item
-            prepend-icon="mdi-logout"
-            title="Cerrar Sesión"
-            class="logout-item"
-            @click="handleLogout"
-          ></v-list-item>
-        </v-list>
-      </v-menu>
-
-      <v-btn icon @click="$router.push('/cart')">
-        <v-icon>mdi-cart</v-icon>
-        <v-badge
-          v-if="sessionStore.cart.length > 0"
-          :content="sessionStore.cart.length"
-          color="red"
-          overlap
-          bordered
-        ></v-badge>
-      </v-btn>
+        </div>
     </div>
   </div>
 </template>
@@ -130,10 +140,28 @@
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useAuthStore } from '@/stores/auth'
+import { ref, onMounted } from 'vue'
+import { profileService } from '@/services/profile.service'
 
 const router = useRouter()
 const sessionStore = useSessionStore()
 const authStore = useAuthStore()
+
+// Cargar foto cuando se monta el componente (solo si no está en el store)
+onMounted(async () => {
+  try {
+    if (sessionStore.isAuthenticated && sessionStore.token && !sessionStore.userPhoto) {
+      const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+      const response = await profileService.getProfile(sessionStore.token, userType)
+      
+      if (response.ok && response.result?.foto) {
+        sessionStore.setUserPhoto(response.result.foto)
+      }
+    }
+  } catch (error) {
+    console.error('Error cargando foto del perfil:', error)
+  }
+})
 
 // Navegación
 const goToProfile = () => {
@@ -150,16 +178,16 @@ const goToMyCourses = () => {
 
 const goToSettings = () => {
   router.push({ name: 'settings' })
+    router.push({ name: 'teacher-courses' })
 }
 
-// Cerrar sesión
 const handleLogout = async () => {
-  try {
-    await authStore.logout()
-    router.push({ name: 'home' })
-  } catch (error) {
-    console.error('Error al cerrar sesión:', error)
-  }
+    try {
+        await authStore.logout()
+        router.push({ name: 'login' })
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error)
+    }
 }
 </script>
 
