@@ -121,8 +121,19 @@
                     ></v-list-item>
                 </v-list>
             </v-menu>
+          <v-btn icon @click="$router.push('/cart')">
+            <v-icon>mdi-cart</v-icon>
+            <v-badge
+              v-if="sessionStore.cart.length > 0"
+              :content="sessionStore.cart.length"
+              color="red"
+              overlap
+              bordered
+            ></v-badge>
+          </v-btn>
         </div>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -154,10 +165,19 @@ onMounted(async () => {
 
 // Navegación
 const goToProfile = () => {
-    router.push({ name: 'profile' })
+  router.push({ name: 'profile' })
 }
 
 const goToMyCourses = () => {
+  if (sessionStore.isTeacher) {
+    router.push({ name: 'teacher-courses' })
+  } else {
+    router.push({ name: 'my-courses' })
+  }
+}
+
+const goToSettings = () => {
+  router.push({ name: 'settings' })
     router.push({ name: 'teacher-courses' })
 }
 
@@ -175,133 +195,133 @@ const handleLogout = async () => {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
-    font-family: "Poppins", sans-serif;
-    font-weight: 500;
-    font-style: normal;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .poppins-bold {
-    font-family: "Poppins", sans-serif;
-    font-weight: 600;
-    font-style: normal;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 .navbar {
-    position: sticky;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 80px;
-    width: 100%;
-    height: 70px;
-    background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
-    z-index: 2;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 80px;
+  width: 100%;
+  height: 70px;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  z-index: 2;
 }
 
 .logo {
-    height: 45px;
-    cursor: pointer;
+  height: 45px;
+  cursor: pointer;
 }
 
 .navigation {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .nav-btn {
-    text-transform: none;
-    font-weight: 500;
-    letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .login-btn {
-    margin-left: 12px;
+  margin-left: 12px;
 }
 
 .user-btn {
-    margin-left: 12px;
-    text-transform: none;
-    font-weight: 500;
-    letter-spacing: 0;
-    padding: 8px 16px;
-    height: 40px;
+  margin-left: 12px;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: 0;
+  padding: 8px 16px;
+  height: 40px;
 }
 
 .user-name {
-    font-size: 0.95rem;
-    margin-left: 4px;
-    margin-right: 4px;
+  font-size: 0.95rem;
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .user-menu {
-    min-width: 300px;
-    margin-top: 8px;
+  min-width: 300px;
+  margin-top: 8px;
 }
 
 .user-info {
-    background-color: #f5f5f5;
-    padding: 16px !important;
-    min-height: 80px;
+  background-color: #f5f5f5;
+  padding: 16px !important;
+  min-height: 80px;
 }
 
 .user-info .v-list-item-title {
-    font-size: 1rem;
-    margin-bottom: 4px;
-    line-height: 1.5;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 
 .user-info .v-list-item-subtitle {
-    font-size: 0.875rem;
-    opacity: 0.7;
-    line-height: 1.4;
+  font-size: 0.875rem;
+  opacity: 0.7;
+  line-height: 1.4;
 }
 
 .occupation-item {
-    background-color: #f9f9f9;
-    font-style: italic;
+  background-color: #f9f9f9;
+  font-style: italic;
 }
 
 .logout-item {
-    color: #d32f2f;
+  color: #d32f2f;
 }
 
 .logout-item:hover {
-    background-color: #ffebee;
+  background-color: #ffebee;
 }
 
 :deep(.user-info .v-list-item__prepend) {
-    margin-right: 16px;
+  margin-right: 16px;
 }
 
 :deep(.user-info .v-list-item__append) {
-    align-self: flex-start;
-    margin-top: 8px;
+  align-self: flex-start;
+  margin-top: 8px;
 }
 
 :deep(.v-list-item__prepend) {
-    margin-right: 12px;
+  margin-right: 12px;
 }
 
 :deep(.v-list-item) {
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 :deep(.v-list-item:hover) {
-    background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 :deep(.v-avatar) {
-    margin-right: 4px;
+  margin-right: 4px;
 }
 
 :deep(.v-btn__content) {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 </style>

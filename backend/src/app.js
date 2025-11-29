@@ -2,23 +2,21 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import routes from './routes/index.js'
+import StripeController from './controllers/stripe.controller.js'
 
 dotenv.config()
 
 const app = express()
+app.use(cors())
 
-// CORS Configuration
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 3600
-}))
+// Webhook de Stripe DEBE ir ANTES de express.json() para recibir raw body
+app.post('/api/stripe/webhook', 
+    express.raw({ type: 'application/json' }),
+    StripeController.handleWebhook
+)
 
-app.use(express.json({ limit: '50mb' }))
-app.use(express.urlencoded({ limit: '50mb', extended: true }))
-
+// Después aplicar el parser JSON para el resto de rutas
+app.use(express.json())
 app.use('/api/', routes)
 
 const PORT = process.env.PORT

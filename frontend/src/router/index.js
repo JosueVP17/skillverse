@@ -25,6 +25,24 @@ const router = createRouter({
           component: () => import('@/views/Courses/CourseDetail.vue'),
         },
         {
+          path: 'cart',
+          name: 'cart',
+          component: () => import('@/views/Payment/ShoppingCart.vue'),
+        },
+        {
+          path: 'pago-exitoso',
+          name: 'payment-success',
+          component: () => import('@/views/Payment/PaymentSuccess.vue'),
+        },
+        {
+          path: 'carrito',
+          name: 'carrito',
+          component: () => import('@/views/Payment/ShoppingCart.vue'),
+        },
+        {
+          path: 'pago-cancelado',
+          name: 'payment-cancelled',
+          component: () => import('@/views/Payment/PaymentCancelled.vue'),
           path: 'teacher-courses',
           name: 'teacher-courses',
           component: () => import('@/views/Courses/TeacherCourses/index.vue'),
