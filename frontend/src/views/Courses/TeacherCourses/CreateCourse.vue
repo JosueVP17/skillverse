@@ -94,7 +94,10 @@
               <div v-for="(leccion, index) in formData.lecciones" :key="index" class="leccion-card">
                 <div class="leccion-header">
                   <h4>{{ leccion.titulo }}</h4>
-                  <button type="button" class="btn-remove" @click="removeLeccion(index)">Eliminar</button>
+                  <div class="actions-lessons">
+                    <button type="button" class="btn-remove" @click="removeLeccion(index)">Eliminar</button>
+                    <button type="button" class="btn-edit" @click="editLeccion(index)">Editar</button>
+                  </div>
                 </div>
                 <p class="leccion-texto">{{ leccion.texto.substring(0, 100) }}...</p>
               </div>
@@ -103,9 +106,19 @@
               <p>No hay lecciones agregadas aún</p>
             </div>
 
-            <!-- Formulario para agregar lección -->
+            <!-- Formulario para agregar/editar lección -->
             <div class="add-leccion-form">
-              <h4>Agregar Nueva Lección</h4>
+              <div class="form-header-with-cancel">
+                <h4>{{ editingLeccionIndex !== null ? 'Editar Lección' : 'Agregar Nueva Lección' }}</h4>
+                <button 
+                  v-if="editingLeccionIndex !== null" 
+                  type="button" 
+                  class="btn-cancel-edit" 
+                  @click="cancelEditLeccion"
+                >
+                  ✕ Cancelar
+                </button>
+              </div>
               
               <div class="form-group">
                 <label>Título de la Lección *</label>
@@ -128,7 +141,7 @@
               </div>
 
               <button type="button" class="btn-add-leccion" @click="addLeccion">
-                + Agregar Lección
+                {{ editingLeccionIndex !== null ? '✓ Actualizar Lección' : '+ Agregar Lección' }}
               </button>
             </div>
           </div>
@@ -162,6 +175,7 @@ const emit = defineEmits(['close', 'course-created'])
 const sessionStore = useSessionStore()
 const loading = ref(false)
 const activeTab = ref('info')
+const editingLeccionIndex = ref(null) 
 
 const formData = ref({
   nombre: '',
@@ -201,6 +215,29 @@ const closeModal = () => {
   emit('close')
 }
 
+// Cargar una lección en el formulario de edición
+const editLeccion = (index) => {
+  editingLeccionIndex.value = index
+  const leccion = formData.value.lecciones[index]
+  newLeccion.value = {
+    titulo: leccion.titulo,
+    texto: leccion.texto,
+    imagen: leccion.imagen,
+    video: leccion.video || ''
+  }
+}
+
+// Cancelar la edición
+const cancelEditLeccion = () => {
+  editingLeccionIndex.value = null
+  newLeccion.value = {
+    titulo: '',
+    texto: '',
+    imagen: '',
+    video: ''
+  }
+}
+
 const addLeccion = () => {
   // Validar que todos los campos obligatorios estén completos
   if (!newLeccion.value.titulo || !newLeccion.value.texto || !newLeccion.value.imagen) {
@@ -208,8 +245,16 @@ const addLeccion = () => {
     return
   }
 
-  // Agregar la lección al array
-  formData.value.lecciones.push({ ...newLeccion.value })
+  if (editingLeccionIndex.value !== null) {
+    // Actualizar lección (index)
+    formData.value.lecciones[editingLeccionIndex.value] = { ...newLeccion.value }
+    alert('Lección actualizada correctamente')
+    editingLeccionIndex.value = null
+  } else {
+    // Agregar nueva lección
+    formData.value.lecciones.push({ ...newLeccion.value })
+    alert('Lección agregada correctamente')
+  }
 
   // Limpiar el formulario de lección
   newLeccion.value = {
@@ -218,12 +263,16 @@ const addLeccion = () => {
     imagen: '',
     video: ''
   }
-
-  alert('Lección agregada correctamente')
 }
 
 const removeLeccion = (index) => {
-  formData.value.lecciones.splice(index, 1)
+  if (confirm('¿Estás seguro de eliminar esta lección?')) {
+    formData.value.lecciones.splice(index, 1)
+    // Cancelar edición si se estaba editando la lección eliminada
+    if (editingLeccionIndex.value === index) {
+      cancelEditLeccion()
+    }
+  }
 }
 
 const submitForm = async () => {
@@ -576,7 +625,7 @@ const submitForm = async () => {
   margin: 0;
 }
 
-.btn-remove {
+.btn-remove, .btn-edit {
   background: #ff6b6b;
   color: white;
   border: none;
@@ -591,6 +640,14 @@ const submitForm = async () => {
 
 .btn-remove:hover {
   background: #ff5252;
+}
+
+.btn-edit {
+  background: #4caf50;
+}
+
+.btn-edit:hover {
+  background: #45a049;
 }
 
 .leccion-texto {
@@ -649,6 +706,34 @@ const submitForm = async () => {
   box-shadow: 0 4px 12px rgba(73, 187, 189, 0.3);
 }
 
+.form-header-with-cancel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.form-header-with-cancel h4 {
+  margin: 0;
+}
+
+.btn-cancel-edit {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-cancel-edit:hover {
+  background: #ff5252;
+}
+
 @media (max-width: 600px) {
   .modal {
     max-width: 100%;
@@ -674,5 +759,11 @@ const submitForm = async () => {
     padding: 12px;
     font-size: 12px;
   }
+}
+
+.actions-lessons {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
 }
 </style>

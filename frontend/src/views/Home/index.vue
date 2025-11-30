@@ -67,10 +67,10 @@
                     <v-icon color="white" icon="mdi-file-document-outline" size="large"></v-icon>
                 </div>
                 <p class="online-billing">
-                    Facturacion, Cobranza y Contratos en Linea
+                    Construye la Experiencia Educativa que Imaginas
                 </p>
                 <p class="text-wrapper">
-                    Control simple y seguro de las transacciones financieras y legales de tu organizacion. Envia facturas y contratos.
+                    Diseña tus cursos a tu manera. Crea y ajusta cada lección según tu estilo de enseñanza. Con Skillverse, los educadores tienen el control total de su aula digital.
                 </p>
             </div>
             <div class="rectangle">
@@ -89,10 +89,10 @@
                     <v-icon color="white" icon="mdi-account-group" size="large"></v-icon>
                 </div>
                 <p class="online-billing">
-                    Seguimiento de Clientes
+                    Escucha, Mejora y Evoluciona tu Curso
                 </p>
                 <p class="text-wrapper">
-                    Automatiza y realiza el seguimiento de correos electrónicos a individuos o grupos. El sistema integrado de Skilline ayuda a organizar tu organización.
+                    Recibe comentarios de tus estudiantes a través de evaluaciones y reseñas. Comprende qué funciona, qué puede mejorar y adapta tu contenido. 
                 </p>
             </div>
         </div>
@@ -362,13 +362,14 @@
     .cards .rectangle {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         background-color: #ffffff;
         border-radius: 20px;
         box-shadow: 0px 0px 15px rgba(0, 0, 0 , 0.10);
-        height: 340px;
+        min-height: 340px;
+        height: auto;
         width: 30%;
-        padding: 15px;
+        padding: 30px 20px;
     }
 
     .cards .online-billing {
@@ -382,6 +383,8 @@
         width: 100%;
         padding: 0 12px;
         margin-bottom: 16px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .cards .text-wrapper {
@@ -390,22 +393,28 @@
         font-size: 16px;
         font-weight: 400;
         letter-spacing: 0;
+        line-height: 1.5;
         text-align: center;
         width: 100%;
         padding: 0 12px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .cards .file-invoice-wrapper {
         background-color: #5b72ee;
-        border-radius: 50px;
+        border-radius: 50%;
         box-shadow: 0px 10px 40px #363c880f;
         display: flex;
         justify-content: center;
-        justify-items: center;
+        align-items: center;
         height: 60px;
         width: 60px;
+        min-height: 60px;
+        min-width: 60px;
         margin: 0 auto 20px;
-        padding-top: 16px;
+        padding: 0;
+        flex-shrink: 0;
     }
 
     .row-img {
@@ -479,6 +488,8 @@
 
         .cards .rectangle {
             width: 100%;
+            min-height: auto;
+            padding: 25px 15px;
         }
 
         .btn-overlay-profesor {
@@ -564,10 +575,19 @@
 
         .cards .online-billing {
             font-size: 18px;
+            line-height: 1.3;
         }
 
         .cards .text-wrapper {
             font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .cards .file-invoice-wrapper {
+            height: 55px;
+            width: 55px;
+            min-height: 55px;
+            min-width: 55px;
         }
 
         .row-img {
@@ -690,15 +710,19 @@
 
         .cards .online-billing {
             font-size: 16px;
+            line-height: 1.3;
         }
 
         .cards .text-wrapper {
             font-size: 13px;
+            line-height: 1.4;
         }
 
         .cards .file-invoice-wrapper {
             height: 50px;
             width: 50px;
+            min-height: 50px;
+            min-width: 50px;
         }
 
         .row-img {
