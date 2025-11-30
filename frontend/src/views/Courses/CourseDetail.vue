@@ -168,7 +168,16 @@
 
         <!-- Lessons List -->
         <div class="lessons-section">
-          <h2>Contenido del Curso ({{ lessons.length }} lecciones)</h2>
+          <div class="info-curso" >
+            <h2>Contenido del Curso ({{ lessons.length }} lecciones)</h2>
+            <button 
+              v-if="sessionStore.hasPurchasedCourse(course.id)" 
+              class="btn-lessons"
+              @click="gotoLessons"
+            >
+              Comienza a estudiar
+            </button>
+          </div>
           <div v-if="lessons.length === 0" class="no-lessons">
             <p>No hay lecciones disponibles aún.</p>
           </div>
@@ -440,6 +449,16 @@ const addToCart = () => {
 const goToMyCourses = () => {
   router.push('/teacher-courses') 
 }
+
+const gotoLessons = () => {
+  router.push(
+    `/courses/${courseId}/lessons`
+    //{name:'lectures',
+    //params: {id: courseId}}
+    ).then(() => {
+      window.location.reload();
+  })
+} 
 
 const getProfesorFullName = (prof) => {
   if (!prof) return 'Profesor'
@@ -771,7 +790,7 @@ const submitComment = async () => {
   background: rgba(73, 187, 189, 0.8);
 }
 
-.btn-purchased {
+.btn-purchased, .btn-lessons {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
@@ -791,6 +810,20 @@ const submitComment = async () => {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-lessons {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  padding: 4px 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  height: 4em;
+}
+
+.btn-lessons:hover {
+  background: linear-gradient(135deg, #357abd 0%, #2868a8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3);
 }
 
 .share-section {
@@ -1343,6 +1376,12 @@ const submitComment = async () => {
   color: #666;
   line-height: 1.6;
   margin: 0;
+}
+
+.info-curso{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* Responsive */
