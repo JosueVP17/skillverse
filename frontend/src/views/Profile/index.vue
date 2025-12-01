@@ -280,13 +280,21 @@ const handleAvatarUpload = (event) => {
 
   // Validar que sea imagen
   if (!file.type.startsWith('image/')) {
-    alert('Por favor selecciona un archivo de imagen válido')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor selecciona un archivo de imagen válido',
+      color: 'warning',
+    }
     return
   }
 
   // Validar tamaño (máximo 5MB)
   if (file.size > 5 * 1024 * 1024) {
-    alert('La imagen no debe exceder 5MB')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'La imagen no debe exceder 5MB',
+      color: 'warning',
+    }
     return
   }
 
@@ -300,7 +308,11 @@ const handleAvatarUpload = (event) => {
 
 const handleSubmit = async () => {
   if (!formData.value.nombre || !formData.value.apaterno || !formData.value.amaterno || !formData.value.edad || !formData.value.email) {
-    alert('Por favor completa todos los campos obligatorios')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor completa todos los campos obligatorios',
+      color: 'warning',
+    }
     return
   }
 
@@ -332,10 +344,18 @@ const handleSubmit = async () => {
       dataToUpdate.email
     )
 
-    alert('Perfil actualizado exitosamente')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Perfil actualizado exitosamente',
+      color: 'success',
+    }
     avatarPreview.value = null
   } catch (error) {
-    alert('Error: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error: ' + error.message,
+      color: 'error',
+    }
     console.error('Profile update error:', error)
   } finally {
     loading.value = false
@@ -354,7 +374,11 @@ const resetForm = () => {
 
 const handleSavePhoto = async () => {
   if (!avatarPreview.value) {
-    alert('Por favor selecciona una foto')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor selecciona una foto',
+      color: 'warning',
+    }
     return
   }
 
@@ -373,9 +397,17 @@ const handleSavePhoto = async () => {
     // Actualizar también en el sessionStore para que se vea en el navbar
     sessionStore.setUserPhoto(avatarPreview.value)
     avatarPreview.value = null
-    alert('Foto actualizada exitosamente')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Foto actualizada exitosamente',
+      color: 'success',
+    }
   } catch (error) {
-    alert('Error al guardar la foto: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al guardar la foto: ' + error.message,
+      color: 'error',
+    }
     console.error('Photo save error:', error)
   } finally {
     loading.value = false
@@ -388,19 +420,31 @@ const cancelPhotoUpload = () => {
 
 const handlePasswordChange = async () => {
   if (passwordData.value.new !== passwordData.value.confirm) {
-    alert('Las contraseñas no coinciden')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Las contraseñas no coinciden',
+      color: 'warning',
+    }
     return
   }
 
   if (!passwordData.value.current || !passwordData.value.new) {
-    alert('Por favor completa todos los campos')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor completa todos los campos',
+      color: 'warning',
+    }
     return
   }
 
   // Validar contraseña: mayúsculas, minúsculas, números, caracteres especiales, 8-32 caracteres
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/
   if (!passwordRegex.test(passwordData.value.new)) {
-    alert('La contraseña debe tener: mayúsculas, minúsculas, números, caracteres especiales (@$!%*?&) y entre 8-32 caracteres')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'La nueva contraseña no cumple con los requisitos de seguridad',
+      color: 'warning',
+    }
     return
   }
 
@@ -414,10 +458,18 @@ const handlePasswordChange = async () => {
       userType
     )
 
-    alert('Contraseña actualizada exitosamente')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Contraseña actualizada exitosamente',
+      color: 'success',
+    }
     resetPasswordForm()
   } catch (error) {
-    alert('Error: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error: ' + error.message,
+      color: 'error',
+    }
     console.error('Password change error:', error)
   } finally {
     loading.value = false

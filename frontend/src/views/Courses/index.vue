@@ -197,7 +197,6 @@ const handleCourseClick = (courseId) => {
         gap: 2vw;
         flex-wrap: wrap;
         justify-content: center;
-        min-height: 500px;
         padding: 0 12px;
     }
 

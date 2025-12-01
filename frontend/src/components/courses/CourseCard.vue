@@ -180,6 +180,17 @@
         font-weight: bolder;
     }
 
+    .course-professor-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1.3;
+        max-height: calc(1.3em * 2);
+        word-break: break-word;
+    }
+
     @media (max-width: 1024px) {
         .course-card {
             width: 30vw;
@@ -248,6 +259,8 @@
 
         .course-professor-name {
             font-size: 12px;
+            line-height: 1.2;
+            max-height: calc(1.2em * 2);
         }
     }
 
@@ -310,6 +323,8 @@
 
         .course-professor-name {
             font-size: 11px;
+            line-height: 1.2;
+            max-height: calc(1.2em * 2);
         }
 
         .professor-info {

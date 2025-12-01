@@ -43,22 +43,36 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useSessionStore } from '@/stores/session'
 
+const sessionStore = useSessionStore()
 const email = ref('')
 
 const handleSubscribe = () => {
     if (!email.value) {
-        alert('Por favor ingresa un correo electrónico')
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Por favor ingresa un correo electrónico',
+          color: 'warning',
+        }
         return
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email.value)) {
-        alert('Por favor ingresa un correo electrónico válido')
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Por favor ingresa un correo electrónico válido',
+          color: 'warning',
+        }
         return
     }
     
-    alert(`¡Gracias por suscribirte! Te enviaremos nuestras ofertas a ${email.value}`)
+    sessionStore.snackbar = {
+      show: true,
+      message: `¡Gracias por suscribirte! Te enviaremos nuestras ofertas a ${email.value}`,
+      color: 'success',
+    }
     email.value = ''
 }
 </script>

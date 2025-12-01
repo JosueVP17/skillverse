@@ -32,7 +32,7 @@
     import FilterSelect from './FilterSelect.vue';
     import { ref } from 'vue';
 
-    const emit = defineEmits(['resetSearch']);
+    const emit = defineEmits(['resetSearch', 'search', 'categoria', 'precio', 'complejidad']);
     const searchText = ref('');
 
 

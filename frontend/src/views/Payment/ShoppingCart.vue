@@ -259,6 +259,18 @@
         </div>
       </div>
     </div>
+
+    <v-dialog v-model="showDeleteDialog" max-width="400">
+      <v-card>
+        <v-card-title>Confirmar eliminación</v-card-title>
+        <v-card-text>¿Estás seguro de que deseas eliminar este curso del carrito?</v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn text @click="cancelDelete">Cancelar</v-btn>
+          <v-btn color="error" text @click="confirmDelete">Eliminar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -274,6 +286,8 @@ const sessionStore = useSessionStore()
 const cartItems = ref([])
 const loading = ref(true)
 const processingPayment = ref(false)
+const showDeleteDialog = ref(false)
+const courseToDelete = ref(null)
 
 // Computed
 const subtotal = computed(() => {
@@ -322,7 +336,35 @@ const loadCartItems = async () => {
     const courses = await Promise.all(coursesPromises)
 
     // Filtrar cursos nulos (por si alguno falló)
-    cartItems.value = courses.filter((course) => course !== null)
+    //cartItems.value = courses.filter((course) => course !== null)
+    const validCourses = []
+    const invalidCourseIds = []
+
+    courses.forEach((course, index) => {
+      if(course === null){
+        invalidCourseIds.push(cartIds[index])
+      } else {
+        validCourses.push(course)
+      }
+    })
+
+    //Eliminar cursos inválidos del carrito
+    if(invalidCourseIds.length > 0){
+      for(const invalidId of invalidCourseIds){
+        await Promise.all(invalidCourseIds.map(courseId => sessionStore.removeFromCart(courseId)))
+
+        //Cargar de nuevo el carrito
+        await sessionStore.fetchCart()
+
+        //Mandar mensaje al usuario
+        sessionStore.snackbar ={
+          show: true,
+          message: 'Algunos cursos en tu carrito ya no están disponibles y han sido eliminados.',
+          color: 'warning',
+        }
+      }
+    }
+
   } catch (error) {
     console.error('Error al cargar items del carrito:', error)
     cartItems.value = []
@@ -332,17 +374,38 @@ const loadCartItems = async () => {
 }
 
 const removeItem = async (courseId) => {
-  if (!confirm('¿Estás seguro de que deseas eliminar este curso del carrito?')) {
-    return
+  //if (!confirm('¿Estás seguro de que deseas eliminar este curso del carrito?')) {
+    //return
+    courseToDelete.value = courseId
+    showDeleteDialog.value = true
   }
 
+const confirmDelete = async () => {
+  if (!courseToDelete.value) return
+
+  const courseId = courseToDelete.value
+  
+  // Cerrar el diálogo INMEDIATAMENTE
+  showDeleteDialog.value = false
+  courseToDelete.value = null
+
+  // LUEGO ejecutar la operación
   const result = await sessionStore.removeFromCart(courseId)
 
   if (result.result) {
     await loadCartItems()
   } else {
-    alert('Error al eliminar el curso: ' + result.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al eliminar el curso: ' + result.message,
+      color: 'error',
+    }
   }
+}
+
+const cancelDelete = () => {
+  showDeleteDialog.value = false
+  courseToDelete.value = null
 }
 
 const proceedToCheckout = async () => {
@@ -353,7 +416,11 @@ const proceedToCheckout = async () => {
     await renderStripeProcess(sessionStore.userId)
   } catch (error) {
     processingPayment.value = false
-    alert('Error al procesar el pago: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al procesar el pago: ' + error.message,
+      color: 'error',
+    }
   }
 }
 
@@ -374,13 +441,21 @@ const truncateText = (text, maxLength) => {
 // Lifecycle
 onMounted(async () => {
   if (!sessionStore.isAuthenticated) {
-    alert('Debes iniciar sesión para ver tu carrito')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Debes iniciar sesión para acceder al carrito',
+      color: 'warning',
+    }
     router.push('/auth/login')
     return
   }
 
   if (!sessionStore.isStudent) {
-    alert('Solo los estudiantes pueden acceder al carrito')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Solo los estudiantes pueden acceder al carrito',
+      color: 'warning',
+    }
     router.push('/')
     return
   }

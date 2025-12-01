@@ -9,6 +9,11 @@ export const useSessionStore = defineStore('session', () => {
   const purchasedCourses = ref([])
   const userPhoto = ref(null)
 
+  const snackbar = ref({
+    show: false,
+    message: '',
+    color: 'success',
+  })
   // Getters
   const isAuthenticated = computed(() => !!token.value && !!payload.value)
 
@@ -125,7 +130,11 @@ export const useSessionStore = defineStore('session', () => {
     await fetchCart()
 
     if (cart.value.includes(courseId)) {
-      alert('El curso ya está en el carrito')
+      snackbar.value = {
+        show: true,
+        message: 'El curso ya está en el carrito',
+        color: 'error',
+      }
       return
     }
 
@@ -146,7 +155,11 @@ export const useSessionStore = defineStore('session', () => {
 
       if (data.ok) {
         await fetchCart()
-        alert('Curso agregado al carrito.')
+        snackbar.value = {
+          show: true,
+          message: 'Curso agregado al carrito.',
+          color: 'success',
+        }
       } else {
         console.error('Error al agregar al carrito:', data.message)
       }
@@ -344,5 +357,7 @@ export const useSessionStore = defineStore('session', () => {
     updateUserData,
     restoreSession,
     startExpirationCheck,
+
+    snackbar,
   }
 })

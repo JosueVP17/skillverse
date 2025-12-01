@@ -6,8 +6,8 @@
                 <h1 class="poppins-bold"><span class="poppins-bold" style="color: orange !important">Estudiar</span> en linea ahora es mucho mas facil</h1>
                 <p>Skillverse es una plataforma interesante que te ense&ntilde;ara de una forma mucho mas interactiva.</p>
                 <div class="join-box">
-                    <v-btn class="join-btn" rounded="xl" density="comfortable" variant="tonal" @click="$router.push('/auth')" >Unete Gratis</v-btn>
-                    <v-btn class="ma-2" style="margin-right: 15px !important" color="white" icon="mdi-play" variant="flat" @click="$router.push('/courses') " ></v-btn>
+                    <v-btn class="join-btn" rounded="xl" density="comfortable" variant="tonal" @click="explorar()" >Unete Gratis</v-btn>
+                    <v-btn class="ma-2" style="margin-right: 15px !important" color="white" icon="mdi-play" variant="flat" @click="$router.push('/courses')" ></v-btn>
                     <p>Comienza a explorar.</p>
                 </div>
             </div>
@@ -111,7 +111,7 @@
 
         <div class="row-img">
             <img src="@/assets/HomeBackdrops.png" style="width: 75%" alt="" />
-            <v-btn class="btn-overlay-profesor" rounded="xl" density="comfortable" variant="flat" color="white" @click="$router.push('/auth/teacher-register')">Inicia tus clases</v-btn>
+            <v-btn class="btn-overlay-profesor" rounded="xl" density="comfortable" variant="flat" color="white" @click="iniciaClases()">Inicia tus clases</v-btn>
 
             <v-btn class="btn-overlay-alumno" rounded="xl" density="comfortable" variant="flat" @click="$router.push('/courses')" >Comienza a aprender</v-btn>
         </div>
@@ -124,16 +124,53 @@
 <script setup>
     // IMPORTS
     import { ref, onMounted } from 'vue'
-
+    import { useRouter } from 'vue-router'
     // STORES
     import { useUIStore } from '@/stores/ui'
+    import { useSessionStore } from '@/stores/session'
     const uiStore = useUIStore()
+    const sessionStore = useSessionStore()
+    const router = useRouter()
 
     // HOOKS
     onMounted(() => {
         uiStore.setTitlePage('Home');
         uiStore.setTabPage('Home');
     })
+
+    const explorar = () => {
+        if(sessionStore.isAuthenticated) {
+           sessionStore.snackbar = {
+                show: true,
+                message: 'Ya has iniciado sesión.',
+                color: 'warning',
+           }
+           return
+        }
+        // Redirigir a la página de cursos
+        router.push('/auth')
+    }
+
+    const iniciaClases = () => {
+        if(sessionStore.isAuthenticated && sessionStore.isTeacher){
+            sessionStore.snackbar = {
+                show: true,
+                message: 'Redirigiendo a tu panel de profesor.',
+                color: 'success',
+        }
+            router.push('teacher-courses')
+            return
+    }   else if (sessionStore.isAuthenticated && sessionStore.isStudent){
+            sessionStore.snackbar = {
+                show: true,
+                message: 'Ya has iniciado sesión como estudiante.',
+                color: 'warning',
+        }
+            return
+        }
+        //Redirigir a la página de autenticación (no loggeados)
+        router.push('/auth/teacher-register')
+    }
 </script>
 
 <style lang="css" scoped>

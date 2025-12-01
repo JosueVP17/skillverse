@@ -156,6 +156,20 @@
         </div>
       </form>
     </div>
+
+    <!-- Cuadro de confirmación -->
+    <v-dialog v-model="showDeleteDialog" max-width="400">
+      <v-card>
+        <v-card-title>Confirmar eliminación</v-card-title>
+        <v-card-text>¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn text
+            @click="cancelDelete">Cancelar</v-btn>
+          <v-btn color="error"        @click="confirmDelete">Eliminar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -176,6 +190,8 @@ const sessionStore = useSessionStore()
 const loading = ref(false)
 const activeTab = ref('info')
 const editingLeccionIndex = ref(null) 
+const showDeleteDialog = ref(false)
+const courseToDelete = ref(null)
 
 const formData = ref({
   nombre: '',
@@ -241,19 +257,31 @@ const cancelEditLeccion = () => {
 const addLeccion = () => {
   // Validar que todos los campos obligatorios estén completos
   if (!newLeccion.value.titulo || !newLeccion.value.texto || !newLeccion.value.imagen) {
-    alert('Por favor completa los campos obligatorios de la lección (Título, Texto e Imagen)')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor completa los campos obligatorios de la lección (Título, Texto e Imagen)',
+      color: 'warning',
+    }
     return
   }
 
   if (editingLeccionIndex.value !== null) {
     // Actualizar lección (index)
     formData.value.lecciones[editingLeccionIndex.value] = { ...newLeccion.value }
-    alert('Lección actualizada correctamente')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Lección actualizada correctamente',
+      color: 'success',
+    }
     editingLeccionIndex.value = null
   } else {
     // Agregar nueva lección
     formData.value.lecciones.push({ ...newLeccion.value })
-    alert('Lección agregada correctamente')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Lección agregada correctamente',
+      color: 'success',
+    }
   }
 
   // Limpiar el formulario de lección
@@ -266,20 +294,53 @@ const addLeccion = () => {
 }
 
 const removeLeccion = (index) => {
-  if (confirm('¿Estás seguro de eliminar esta lección?')) {
+  /*if (confirm('¿Estás seguro de eliminar esta lección?')) {
     formData.value.lecciones.splice(index, 1)
     // Cancelar edición si se estaba editando la lección eliminada
     if (editingLeccionIndex.value === index) {
       cancelEditLeccion()
     }
+  }*/
+  courseToDelete.value = index
+  showDeleteDialog.value = true
+}
+
+const confirmDelete = () => {
+  if (courseToDelete.value === null) return
+  const index = courseToDelete.value
+  //Cerrar el diálogo 
+  showDeleteDialog.value = false
+  courseToDelete.value = null
+
+  formData.value.lecciones.splice(index, 1)
+  //Cancelar edición si se estaba editando la lección que fue eliminada
+  if (editingLeccionIndex.value === index) {
+    cancelEditLeccion()
+  } else if (editingLeccionIndex.value !== null && editingLeccionIndex.value > index) {
+    // Ajustar índice si se eliminó una lección antes de la que se está editando
+    editingLeccionIndex.value--
+  }
+  
+  sessionStore.snackbar = {
+    show: true,
+    message: 'Lección eliminada correctamente',
+    color: 'success',
   }
 }
 
+const cancelDelete = () => {
+  showDeleteDialog.value = false
+  courseToDelete.value = null
+}
 const submitForm = async () => {
   // Validar campos obligatorios del curso
   if (!formData.value.nombre || !formData.value.descripcion || !formData.value.precio || 
       !formData.value.duracion || !formData.value.img || !formData.value.categoria || !formData.value.complejidad) {
-    alert('Por favor completa todos los campos obligatorios del curso')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor completa todos los campos obligatorios del curso',
+      color: 'warning',
+    }
     return
   }
 
@@ -287,7 +348,11 @@ const submitForm = async () => {
   try {
     new URL(formData.value.img)
   } catch (e) {
-    alert('La imagen debe ser una URL válida (ej: https://...)')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'La imagen debe ser una URL válida (ej: https://...)',
+      color: 'warning',
+    }
     return
   }
 
@@ -305,14 +370,22 @@ const submitForm = async () => {
       // Editar curso existente
       response = await cursoService.updateCurso(props.editingCurso.id, dataToSend, sessionStore.token)
       if (response.ok) {
-        alert('Curso actualizado exitosamente')
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Curso actualizado exitosamente',
+          color: 'success',
+        }
         emit('course-created', { ...props.editingCurso, ...response.result })
       }
     } else {
       // Crear nuevo curso
       response = await cursoService.createCurso(dataToSend, sessionStore.token)
       if (response.ok) {
-        alert('Curso creado exitosamente')
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Curso creado exitosamente',
+          color: 'success',
+        }
         emit('course-created', response.result)
       }
     }
@@ -339,7 +412,11 @@ const submitForm = async () => {
       activeTab.value = 'info'
     }
   } catch (error) {
-    alert('Error: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error: ' + error.message,
+      color: 'error',
+    }
     console.error('Curso error:', error)
   } finally {
     loading.value = false

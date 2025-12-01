@@ -435,11 +435,19 @@ const comentariosConFotos = computed(() => {
 // Methods
 const addToCart = () => {
   if (!sessionStore.isAuthenticated) {
-    alert('Por favor, inicia sesión para comprar el curso.')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor, inicia sesión para comprar el curso.',
+      color: 'error'
+    }
     return
   }
   if (!sessionStore.isStudent) {
-    alert('Solo los estudiantes pueden comprar cursos.')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Solo los estudiantes pueden comprar cursos.',
+      color: 'error'
+    }
     return
   }
 
@@ -484,7 +492,11 @@ const getProfesorFullName = (prof) => {
 }
 
 const handleBuy = () => {
-  alert('Procesando compra...')
+  sessionStore.snackbar = {
+    show: true,
+    message: 'Procesando compra...',
+    color: 'warning'
+  }
 }
 
 const share = (platform) => {
@@ -504,7 +516,11 @@ const share = (platform) => {
 
 const copyLink = () => {
   navigator.clipboard.writeText(window.location.href)
-  alert('¡Link copiado al portapapeles!')
+  sessionStore.snackbar = {
+    show: true,
+    message: '¡Link copiado al portapapeles!',
+    color: 'success'
+  }
 }
 
 const calculateAverageRating = () => {
@@ -582,12 +598,30 @@ const getUserPhoto = (usuarioId) => {
 
 const submitComment = async () => {
   if (!newComment.value.texto.trim()) {
-    alert('Por favor escribe un comentario')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor escribe un comentario',
+      color: 'error'
+    }
     return
   }
 
   if (!sessionStore.isAuthenticated) {
-    alert('Debes estar logueado para comentar')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Debes estar logueado para comentar',
+      color: 'error'
+    }
+    return
+  }
+
+  //Prevenir que profesores comenten en los cursos (solo estudiantes podrán)
+  if (!sessionStore.isStudent) {
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Solo los estudiantes pueden comentar los cursos.',
+      color: 'error'
+    }
     return
   }
 
@@ -626,13 +660,25 @@ const submitComment = async () => {
         valoracion: 5,
         anonimo: false
       }
-      alert('¡Comentario publicado!')
+      sessionStore.snackbar = {
+        show: true,
+        message: '¡Comentario publicado!',
+        color: 'success'
+      }
     } else {
-      alert('Error al publicar comentario: ' + data.message)
+      sessionStore.snackbar = {
+        show: true,
+        message: 'Error al publicar comentario: ' + data.message,
+        color: 'error'
+      }
     }
   } catch (error) {
     console.error('Error:', error)
-    alert('Error al publicar comentario')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al publicar comentario',
+      color: 'error'
+    }
   }
 }
 </script>

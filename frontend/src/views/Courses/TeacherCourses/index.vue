@@ -102,6 +102,36 @@
         </div>
       </template>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="showDeleteDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6 font-weight-bold">
+          Confirmar eliminación
+        </v-card-title>
+        
+        <v-card-text class="py-4">
+          ¿Estás seguro que quieres eliminar este curso? Esta acción no se puede deshacer.
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey"
+            variant="text"
+            @click="cancelDelete"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="error" text
+            @click="confirmDelete"
+          >
+            Eliminar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -120,6 +150,8 @@ const editingCurso = ref(null)
 const teacherCourses = ref([])
 const studentCourses = ref([])
 const loadingCourses = ref(false)
+const showDeleteDialog = ref(false)
+const courseToDelete = ref(null)
 
 // Función para cargar/recargar cursos desde el servidor
 const loadCourses = async () => {
@@ -170,19 +202,38 @@ const editCourse = (curso) => {
 }
 
 const deleteCourse = async (cursoId) => {
-  if (!confirm('¿Estás seguro que quieres eliminar este curso?')) {
-    return
-  }
+  courseToDelete.value = cursoId
+  showDeleteDialog.value = true
+}
+
+const confirmDelete = async () => {
+  if (!courseToDelete.value) return
 
   try {
-    await cursoService.deleteCurso(cursoId, sessionStore.token)
-    alert('Curso eliminado exitosamente')
+    await cursoService.deleteCurso(courseToDelete.value, sessionStore.token)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Curso eliminado exitosamente',
+      color: 'success',
+    }
     // Recargar los cursos desde el servidor
     await loadCourses()
   } catch (error) {
-    alert('Error al eliminar curso: ' + error.message)
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al eliminar curso: ' + error.message,
+      color: 'error',
+    }
     console.error('Delete curso error:', error)
   }
+
+  showDeleteDialog.value = false
+  courseToDelete.value = null
+}
+
+const cancelDelete = () => {
+  showDeleteDialog.value = false
+  courseToDelete.value = null
 }
 
 const viewCourse = (cursoId) => {
