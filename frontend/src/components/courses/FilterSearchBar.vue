@@ -32,7 +32,7 @@
     import FilterSelect from './FilterSelect.vue';
     import { ref } from 'vue';
 
-    const emit = defineEmits(['resetSearch']);
+    const emit = defineEmits(['resetSearch', 'search', 'categoria', 'precio', 'complejidad']);
     const searchText = ref('');
 
 
@@ -63,5 +63,41 @@
         border-radius: 12px;
         cursor: pointer;
         font-weight: 500;
+    }
+
+    @media (max-width: 1024px) {
+        .courseSearchFilter {
+            gap: 10px;
+        }
+
+        .resetSearch {
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .courseSearchFilter {
+            gap: 8px;
+        }
+
+        .resetSearch {
+            font-size: 13px;
+            padding: 8px 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .courseSearchFilter {
+            gap: 6px;
+            flex-direction: column;
+        }
+
+        .resetSearch {
+            font-size: 12px;
+            padding: 8px 12px;
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>

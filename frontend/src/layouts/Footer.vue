@@ -9,10 +9,24 @@
         <div class="footer-contact">
             <p>Suscribete para recibir nuestras ofertas</p>
             <div class="footer-input">
-                <v-text-field class="input-text" color="grey-darken-2" rounded="xl" variant="outlined"
-                    placeholder="E-mail" :focused="true"></v-text-field>
-                <v-btn class="footer-btn" color="teal-lighten-2" rounded="xl" density="comfortable"
-                    variant="flat">Suscribirse</v-btn>
+                <v-text-field 
+                    v-model="email"
+                    class="input-text" 
+                    color="grey-darken-2" 
+                    rounded="xl" 
+                    variant="outlined"
+                    placeholder="E-mail" 
+                    :focused="true"
+                    type="email"
+                ></v-text-field>
+                <v-btn 
+                    class="footer-btn" 
+                    color="teal-lighten-2" 
+                    rounded="xl" 
+                    density="comfortable"
+                    variant="flat"
+                    @click="handleSubscribe"
+                >Suscribirse</v-btn>
             </div>
         </div>
 
@@ -28,7 +42,39 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useSessionStore } from '@/stores/session'
 
+const sessionStore = useSessionStore()
+const email = ref('')
+
+const handleSubscribe = () => {
+    if (!email.value) {
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Por favor ingresa un correo electrónico',
+          color: 'warning',
+        }
+        return
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.value)) {
+        sessionStore.snackbar = {
+          show: true,
+          message: 'Por favor ingresa un correo electrónico válido',
+          color: 'warning',
+        }
+        return
+    }
+    
+    sessionStore.snackbar = {
+      show: true,
+      message: `¡Gracias por suscribirte! Te enviaremos nuestras ofertas a ${email.value}`,
+      color: 'success',
+    }
+    email.value = ''
+}
 </script>
 
 <style lang="scss" scoped>
@@ -110,5 +156,146 @@
     margin: 0 15px;
     font-size: 0.9em;
     margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+    .footer-logo {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    .footer-logo > img {
+        margin-right: 0;
+    }
+
+    .footer-logo > p {
+        margin-left: 0;
+        width: auto;
+    }
+
+    .footer-input {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .footer-btn {
+        margin-left: 0;
+    }
+
+    .footer-glossary {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-logo {
+        height: auto;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    .footer-logo > img {
+        height: 50px;
+    }
+
+    .footer-contact > p {
+        font-size: 1em;
+        margin-bottom: 15px;
+    }
+
+    .footer-input {
+        gap: 10px;
+    }
+
+    .footer-btn {
+        height: 48px;
+        font-size: 0.85em;
+    }
+
+    .footer-glossary {
+        margin-top: 25px;
+        gap: 8px;
+    }
+
+    .footer-glossary > p {
+        margin: 0 8px;
+        font-size: 0.85em;
+    }
+
+    .last {
+        margin: 0 10px;
+        font-size: 0.8em;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 12px !important;
+    }
+
+    .footer-logo {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        height: auto;
+    }
+
+    .footer-logo > img {
+        height: 40px;
+    }
+
+    .footer-logo > p {
+        font-size: 0.85em;
+        width: auto;
+        margin: 0;
+    }
+
+    .footer-contact > p {
+        font-size: 0.9em;
+        margin-bottom: 12px;
+    }
+
+    .footer-input {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    :deep(.input-text) {
+        font-size: 12px !important;
+    }
+
+    .footer-btn {
+        height: 40px;
+        font-size: 0.8em;
+        width: 100%;
+    }
+
+    .footer-glossary {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 15px;
+        gap: 6px;
+    }
+
+    .footer-glossary > p {
+        margin: 0;
+        font-size: 0.75em;
+    }
+
+    .v-divider {
+        display: none;
+    }
+
+    .last {
+        margin: 0;
+        font-size: 0.7em;
+        margin-bottom: 15px;
+    }
 }
 </style>

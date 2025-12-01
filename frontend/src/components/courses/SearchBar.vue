@@ -69,10 +69,68 @@ const search = () => {
         border-radius: 12px;
         cursor: pointer;
         font-weight: 600;
-        }
+    }
 
     .search-button:hover {
         opacity: 0.9;
+    }
+
+    @media (max-width: 1024px) {
+        .search-container {
+            padding: 8px 14px;
+            gap: 10px;
+        }
+
+        .search-input {
+            font-size: 16px;
+            padding: 10px 6px;
+        }
+
+        .search-button {
+            font-size: 16px;
+            padding: 10px 18px;
+            gap: 6px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            padding: 8px 12px;
+            gap: 8px;
+        }
+
+        .search-input {
+            font-size: 14px;
+            padding: 8px 6px;
+        }
+
+        .search-button {
+            font-size: 14px;
+            padding: 8px 14px;
+            gap: 6px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .search-container {
+            flex-direction: column;
+            padding: 8px 10px;
+            gap: 8px;
+        }
+
+        .search-input {
+            font-size: 13px;
+            padding: 8px 8px;
+            width: 100%;
+        }
+
+        .search-button {
+            font-size: 12px;
+            padding: 8px 12px;
+            width: 100%;
+            justify-content: center;
+            gap: 6px;
+        }
     }
     
 </style>

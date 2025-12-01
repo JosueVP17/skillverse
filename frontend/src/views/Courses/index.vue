@@ -9,8 +9,13 @@
     </div>
 
     <div class="course-list">
-        <div v-if="isLoading" class="loading-message">
-            <p>Cargando cursos...</p>
+        <div v-if="isLoading" class="loading-container">
+            <div v-for="n in 6" :key="'skeleton-' + n" class="course-card-skeleton">
+                <v-skeleton-loader 
+                    type="image, article, actions"
+                    :elevation="2"
+                ></v-skeleton-loader>
+            </div>
         </div>
         <template v-else>
             <CourseCard
@@ -166,7 +171,7 @@ const resetSearch = () => {
 
 //Paginación
 const currentPage = ref(1);
-const perPage = 6;
+const perPage = 8;
 
 const cursosPaginados = computed(() => {
     const start = (currentPage.value - 1) * perPage;
@@ -184,6 +189,7 @@ const handleCourseClick = (courseId) => {
     .courseSearch{
         margin-top: 2vh;
         margin-bottom: 24px;
+        padding: 0 12px;
     }
 
     .course-list {
@@ -191,7 +197,87 @@ const handleCourseClick = (courseId) => {
         gap: 2vw;
         flex-wrap: wrap;
         justify-content: center;
-        min-height: 500px;
+        padding: 0 12px;
     }
 
+    .loading-container {
+        display: flex;
+        gap: 2vw;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    .course-card-skeleton {
+        width: 350px;
+        max-width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    @media (max-width: 1024px) {
+        .courseSearch {
+            margin-bottom: 20px;
+        }
+
+        .course-list {
+            gap: 16px;
+            padding: 0 16px;
+        }
+
+        .loading-container {
+            gap: 16px;
+            padding: 0 16px;
+        }
+
+        .course-card-skeleton {
+            width: calc(50% - 8px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .courseSearch {
+            margin-top: 15px;
+            margin-bottom: 16px;
+            padding: 0 12px;
+        }
+
+        .course-list {
+            gap: 12px;
+            padding: 0 12px;
+        }
+
+        .loading-container {
+            gap: 12px;
+            padding: 0 12px;
+        }
+
+        .course-card-skeleton {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .courseSearch {
+            margin-top: 12px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+
+        .course-list {
+            gap: 10px;
+            padding: 0 8px;
+            min-height: 300px;
+        }
+
+        .loading-container {
+            gap: 10px;
+            padding: 0 8px;
+        }
+
+        .course-card-skeleton {
+            width: 100%;
+        }
+    }
 </style>

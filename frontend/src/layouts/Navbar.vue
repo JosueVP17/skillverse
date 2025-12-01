@@ -321,4 +321,107 @@ const handleLogout = async () => {
   align-items: center;
   gap: 4px;
 }
+
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 10px 40px;
+        height: 65px;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    .nav-btn {
+        font-size: 14px;
+    }
+
+    .user-name {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 8px 20px;
+        height: 60px;
+    }
+
+    .logo {
+        height: 35px;
+    }
+
+    .navigation {
+        gap: 6px;
+    }
+
+    .nav-btn {
+        font-size: 12px;
+        padding: 6px 10px !important;
+    }
+
+    .login-btn {
+        margin-left: 6px;
+    }
+
+    .user-btn {
+        margin-left: 6px;
+        padding: 6px 10px !important;
+        height: 36px;
+        font-size: 12px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    :deep(.v-btn__content) {
+        gap: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 6px 12px;
+        height: 55px;
+    }
+
+    .logo {
+        height: 30px;
+    }
+
+    .navigation {
+        gap: 4px;
+    }
+
+    .nav-btn {
+        font-size: 11px;
+        padding: 4px 6px !important;
+        min-width: auto;
+        height: 32px;
+    }
+
+    .login-btn {
+        margin-left: 4px;
+    }
+
+    .user-btn {
+        margin-left: 4px;
+        padding: 4px 6px !important;
+        height: 32px;
+        font-size: 10px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .user-menu {
+        min-width: 250px;
+    }
+
+    :deep(.v-btn__content) {
+        gap: 2px;
+    }
+}
 </style>

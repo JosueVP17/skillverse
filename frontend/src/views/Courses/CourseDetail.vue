@@ -168,7 +168,16 @@
 
         <!-- Lessons List -->
         <div class="lessons-section">
-          <h2>Contenido del Curso ({{ lessons.length }} lecciones)</h2>
+          <div class="info-curso" >
+            <h2>Contenido del Curso ({{ lessons.length }} lecciones)</h2>
+            <button 
+              v-if="sessionStore.hasPurchasedCourse(course.id)" 
+              class="btn-lessons"
+              @click="gotoLessons"
+            >
+              Comienza a estudiar
+            </button>
+          </div>
           <div v-if="lessons.length === 0" class="no-lessons">
             <p>No hay lecciones disponibles aún.</p>
           </div>
@@ -426,11 +435,19 @@ const comentariosConFotos = computed(() => {
 // Methods
 const addToCart = () => {
   if (!sessionStore.isAuthenticated) {
-    alert('Por favor, inicia sesión para comprar el curso.')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor, inicia sesión para comprar el curso.',
+      color: 'error'
+    }
     return
   }
   if (!sessionStore.isStudent) {
-    alert('Solo los estudiantes pueden comprar cursos.')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Solo los estudiantes pueden comprar cursos.',
+      color: 'error'
+    }
     return
   }
 
@@ -440,6 +457,16 @@ const addToCart = () => {
 const goToMyCourses = () => {
   router.push('/teacher-courses') 
 }
+
+const gotoLessons = () => {
+  router.push(
+    `/courses/${courseId}/lessons`
+    //{name:'lectures',
+    //params: {id: courseId}}
+    ).then(() => {
+      window.location.reload();
+  })
+} 
 
 const getProfesorFullName = (prof) => {
   if (!prof) return 'Profesor'
@@ -465,7 +492,11 @@ const getProfesorFullName = (prof) => {
 }
 
 const handleBuy = () => {
-  alert('Procesando compra...')
+  sessionStore.snackbar = {
+    show: true,
+    message: 'Procesando compra...',
+    color: 'warning'
+  }
 }
 
 const share = (platform) => {
@@ -485,7 +516,11 @@ const share = (platform) => {
 
 const copyLink = () => {
   navigator.clipboard.writeText(window.location.href)
-  alert('¡Link copiado al portapapeles!')
+  sessionStore.snackbar = {
+    show: true,
+    message: '¡Link copiado al portapapeles!',
+    color: 'success'
+  }
 }
 
 const calculateAverageRating = () => {
@@ -563,12 +598,30 @@ const getUserPhoto = (usuarioId) => {
 
 const submitComment = async () => {
   if (!newComment.value.texto.trim()) {
-    alert('Por favor escribe un comentario')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Por favor escribe un comentario',
+      color: 'error'
+    }
     return
   }
 
   if (!sessionStore.isAuthenticated) {
-    alert('Debes estar logueado para comentar')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Debes estar logueado para comentar',
+      color: 'error'
+    }
+    return
+  }
+
+  //Prevenir que profesores comenten en los cursos (solo estudiantes podrán)
+  if (!sessionStore.isStudent) {
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Solo los estudiantes pueden comentar los cursos.',
+      color: 'error'
+    }
     return
   }
 
@@ -607,13 +660,25 @@ const submitComment = async () => {
         valoracion: 5,
         anonimo: false
       }
-      alert('¡Comentario publicado!')
+      sessionStore.snackbar = {
+        show: true,
+        message: '¡Comentario publicado!',
+        color: 'success'
+      }
     } else {
-      alert('Error al publicar comentario: ' + data.message)
+      sessionStore.snackbar = {
+        show: true,
+        message: 'Error al publicar comentario: ' + data.message,
+        color: 'error'
+      }
     }
   } catch (error) {
     console.error('Error:', error)
-    alert('Error al publicar comentario')
+    sessionStore.snackbar = {
+      show: true,
+      message: 'Error al publicar comentario',
+      color: 'error'
+    }
   }
 }
 </script>
@@ -771,7 +836,7 @@ const submitComment = async () => {
   background: rgba(73, 187, 189, 0.8);
 }
 
-.btn-purchased {
+.btn-purchased, .btn-lessons {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   border: none;
@@ -791,6 +856,20 @@ const submitComment = async () => {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+.btn-lessons {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  padding: 4px 10px;
+  font-size: 0.7em;
+  font-weight: bold;
+  height: 4em;
+}
+
+.btn-lessons:hover {
+  background: linear-gradient(135deg, #357abd 0%, #2868a8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(74, 144, 226, 0.3);
 }
 
 .share-section {
@@ -1345,19 +1424,70 @@ const submitComment = async () => {
   margin: 0;
 }
 
+.info-curso{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 /* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 20px;
+  }
+
+  .hero-section {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-image {
+    width: 100%;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .course-title {
+    font-size: 28px;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
   .hero-image img {
     height: 250px;
   }
 
   .course-title {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .course-description {
+    font-size: 14px;
+  }
+
+  .course-meta {
+    gap: 12px;
+    font-size: 13px;
   }
 
   .price-section {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
   }
 
   .btn-buy {
@@ -1376,6 +1506,155 @@ const submitComment = async () => {
 
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .feature-title {
+    font-size: 15px;
+  }
+
+  .feature-content p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .hero-image img {
+    height: 180px;
+    border-radius: 10px;
+  }
+
+  .hero-content {
+    gap: 16px;
+  }
+
+  .course-title {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .course-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .course-meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .meta-item svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .price-section {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .price {
+    width: 100%;
+  }
+
+  .current-price {
+    font-size: 22px;
+  }
+
+  .btn-buy {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .share-section {
+    gap: 10px;
+  }
+
+  .share-label {
+    font-size: 12px;
+  }
+
+  .social-buttons {
+    gap: 10px;
+  }
+
+  .social-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .social-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .instructor-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .instructor-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .instructor-info h3 {
+    font-size: 15px;
+  }
+
+  .instructor-info p {
+    font-size: 12px;
+  }
+
+  .features-list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    margin: 20px 0 16px 0;
+  }
+
+  .feature-title {
+    font-size: 13px;
+  }
+
+  .feature-content p {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .lessons-section {
+    gap: 12px;
+  }
+
+  .lesson-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .lesson-item h4 {
+    font-size: 13px;
+  }
+
+  .lesson-item p {
+    font-size: 11px;
   }
 }
 </style>

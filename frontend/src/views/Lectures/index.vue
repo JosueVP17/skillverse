@@ -88,7 +88,7 @@
     const returnBack = () => {
 
         // TODO: Cambiar la ruta a la correcta
-        router.push('/').then(() => {
+        router.push(`/courses/${courseId}`).then(() => {
             window.location.reload();
         });
     }
