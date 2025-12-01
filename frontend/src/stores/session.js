@@ -226,6 +226,10 @@ export const useSessionStore = defineStore('session', () => {
       if (isStudent.value) {
         await fetchCart()
         await fetchPurchasedCourses()
+      } else {
+        // Si es profesor, resetear carrito y cursos comprados
+        cart.value = []
+        purchasedCourses.value = []
       }
 
       return true
@@ -240,6 +244,8 @@ export const useSessionStore = defineStore('session', () => {
     token.value = null
     payload.value = null
     userPhoto.value = null
+    cart.value = []
+    purchasedCourses.value = []
     
     localStorage.removeItem('token')
     localStorage.removeItem('userType')
@@ -304,6 +310,10 @@ export const useSessionStore = defineStore('session', () => {
       if (isStudent.value) {
         await fetchCart()
         await fetchPurchasedCourses()
+      } else {
+        // Si es profesor, resetear carrito y cursos comprados
+        cart.value = []
+        purchasedCourses.value = []
       }
 
       return true
