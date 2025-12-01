@@ -335,35 +335,38 @@ const loadCartItems = async () => {
     const coursesPromises = cartIds.map((id) => getCurso(id))
     const courses = await Promise.all(coursesPromises)
 
-    // Filtrar cursos nulos (por si alguno falló)
-    //cartItems.value = courses.filter((course) => course !== null)
+    // Filtrar cursos válidos e inválidos
     const validCourses = []
     const invalidCourseIds = []
 
     courses.forEach((course, index) => {
-      if(course === null){
+      if (course === null) {
         invalidCourseIds.push(cartIds[index])
       } else {
         validCourses.push(course)
       }
     })
 
-    //Eliminar cursos inválidos del carrito
-    if(invalidCourseIds.length > 0){
-      for(const invalidId of invalidCourseIds){
-        await Promise.all(invalidCourseIds.map(courseId => sessionStore.removeFromCart(courseId)))
+    // Eliminar cursos inválidos del carrito (si hay alguno)
+    if (invalidCourseIds.length > 0) {
+      // Eliminar todos los cursos inválidos de una vez
+      await Promise.all(
+        invalidCourseIds.map(courseId => sessionStore.removeFromCart(courseId))
+      )
 
-        //Cargar de nuevo el carrito
-        await sessionStore.fetchCart()
+      // Recargar el carrito
+      await sessionStore.fetchCart()
 
-        //Mandar mensaje al usuario
-        sessionStore.snackbar ={
-          show: true,
-          message: 'Algunos cursos en tu carrito ya no están disponibles y han sido eliminados.',
-          color: 'warning',
-        }
+      // Mostrar mensaje al usuario
+      sessionStore.snackbar = {
+        show: true,
+        message: 'Algunos cursos en tu carrito ya no están disponibles y han sido eliminados.',
+        color: 'warning',
       }
     }
+
+    //Asignar los cursos válidos a cartItems
+    cartItems.value = validCourses
 
   } catch (error) {
     console.error('Error al cargar items del carrito:', error)
