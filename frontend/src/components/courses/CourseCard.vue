@@ -1,0 +1,334 @@
+<template>
+    <div class="course-card" @click="$emit('course-click', id)">
+        <img :src="imageCourse" alt="Imagen del curso {{ title }}" class="course-image" />
+
+        <div class="course-content">
+            <div class="course-info-top">
+                <div class="h-description">
+                    <div>
+                        <span class="course-category"> {{ category }} </span>
+                        <span class="course-category">{{ complexity }}</span>
+                    </div>
+
+                    <div class="course-time">
+                        <i class="mdi mdi-clock-outline"></i>
+                        <span> {{ duration }}</span>
+                    </div>
+                </div>
+
+                <h3 class="course-title"> {{ title }}</h3>
+                <p class="course-description"> {{ description }} </p>
+            </div>
+
+            <div class="h-description professor-section">
+                <div class="professor-info">
+                    <img :src="imageProfesor" alt="Imagen del profesor" class="course-professor-image" />
+                    <span class="course-professor-name"> {{ professorName }} </span>
+                </div>
+
+                <div class="course-price">
+                    <span> ${{ price }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+    const props = defineProps({
+        id: String,
+        title: String,
+        category: String,
+        complexity: String,
+        duration: [ String, Number ],
+        imageCourse: String,
+        description: String,
+        imageProfesor: String,
+        professorName: String,
+        price: [ String, Number ],
+    });
+
+    defineEmits(['course-click']);
+</script>
+
+<style scoped>
+    .course-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 22vw;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        max-height: 32em;
+    }
+
+    .course-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+    }
+
+    .course-image {
+        width: 95%;
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 25px;
+        margin: 10px;
+        flex-shrink: 0;
+    }
+
+    .course-content {
+        padding: 16px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        gap: 12px;
+    }
+
+    .course-info-top {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .course-category {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #f5f5f5;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #696983;
+        margin-bottom: 8px;
+        margin-right: 8px;
+    }
+
+    .course-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #252641;
+        margin: 0 0 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .h-description {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        flex-wrap: nowrap;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .professor-section {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .course-time {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #696983;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .course-professor-image {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 8px;
+    } 
+
+    .professor-info{
+        display: flex;
+        align-items: center;
+    }
+
+    .course-description {
+        font-size: 14px;
+        color: #555770;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        line-height: 1.5;
+        flex: 1;
+        min-height: 0;
+        max-height: calc(1.5em * 4);
+        word-break: break-word;
+    }
+
+    .course-price {
+        font-size: 18px;
+        color: #49BBBD;
+        font-weight: bolder;
+    }
+
+    .course-professor-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-height: 1.3;
+        max-height: calc(1.3em * 2);
+        word-break: break-word;
+    }
+
+    @media (max-width: 1024px) {
+        .course-card {
+            width: 30vw;
+        }
+
+        .course-title {
+            font-size: 16px;
+        }
+
+        .course-category {
+            font-size: 12px;
+            padding: 3px 8px;
+        }
+
+        .course-description {
+            font-size: 13px;
+            -webkit-line-clamp: 3;
+            max-height: calc(1.4em * 3);
+            line-height: 1.4;
+        }
+
+        .course-price {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .course-card {
+            width: 45vw;
+        }
+
+        .course-image {
+            height: 160px;
+        }
+
+        .course-title {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .course-category {
+            font-size: 11px;
+            padding: 3px 7px;
+            margin-right: 6px;
+        }
+
+        .course-description {
+            font-size: 12px;
+            -webkit-line-clamp: 3;
+            max-height: calc(1.4em * 3);
+            line-height: 1.4;
+        }
+
+        .course-time {
+            font-size: 12px;
+        }
+
+        .course-price {
+            font-size: 15px;
+        }
+
+        .course-professor-image {
+            width: 28px;
+            height: 28px;
+        }
+
+        .course-professor-name {
+            font-size: 12px;
+            line-height: 1.2;
+            max-height: calc(1.2em * 2);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .course-card {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .course-image {
+            width: 100%;
+            height: 140px;
+            margin: 0;
+            border-radius: 12px;
+        }
+
+        .course-content {
+            padding: 12px;
+        }
+
+        .course-title {
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .course-category {
+            font-size: 10px;
+            padding: 2px 6px;
+            margin-right: 4px;
+            margin-bottom: 6px;
+        }
+
+        .course-description {
+            font-size: 11px;
+            line-height: 1.3;
+            -webkit-line-clamp: 2;
+            max-height: calc(1.3em * 2);
+        }
+
+        .h-description {
+            margin-bottom: 6px;
+            gap: 4px;
+        }
+
+        .course-time {
+            font-size: 11px;
+            gap: 2px;
+        }
+
+        .course-price {
+            font-size: 14px;
+        }
+
+        .course-professor-image {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+        }
+
+        .course-professor-name {
+            font-size: 11px;
+            line-height: 1.2;
+            max-height: calc(1.2em * 2);
+        }
+
+        .professor-info {
+            gap: 4px;
+        }
+    }
+</style>
