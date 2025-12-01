@@ -316,6 +316,13 @@ const handleLogout = async () => {
   margin-right: 4px;
 }
 
+:deep(.v-avatar img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
 :deep(.v-btn__content) {
   display: flex;
   align-items: center;

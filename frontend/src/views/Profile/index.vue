@@ -207,6 +207,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Crop de Imagen -->
+    <ImageCropperModal
+      v-model="showCropperModal"
+      :image-src="tempImageSrc"
+      :loading="uploadingPhoto"
+      @crop="handleCroppedImage"
+      @close="closeCropperModal"
+    />
   </div>
 </template>
 
@@ -214,6 +223,7 @@
 import { ref, onMounted } from 'vue'
 import { useSessionStore } from '@/stores/session'
 import { profileService } from '@/services/profile.service'
+import ImageCropperModal from '@/components/ImageCropperModal.vue'
 
 const sessionStore = useSessionStore()
 const loading = ref(false)
@@ -221,6 +231,10 @@ const isInitialLoading = ref(true)
 const fileInput = ref(null)
 const avatarPreview = ref(null)
 const userPhoto = ref(null)
+const showCropperModal = ref(false)
+const tempImageSrc = ref('')
+const croppedImageBlob = ref(null)
+const uploadingPhoto = ref(false)
 
 const formData = ref({
   nombre: sessionStore.userName?.split(' ')[0] || '',
@@ -280,30 +294,48 @@ const handleAvatarUpload = (event) => {
 
   // Validar que sea imagen
   if (!file.type.startsWith('image/')) {
-    sessionStore.snackbar = {
-      show: true,
-      message: 'Por favor selecciona un archivo de imagen válido',
-      color: 'warning',
-    }
+    alert('Por favor selecciona un archivo de imagen válido')
     return
   }
 
   // Validar tamaño (máximo 5MB)
   if (file.size > 5 * 1024 * 1024) {
-    sessionStore.snackbar = {
-      show: true,
-      message: 'La imagen no debe exceder 5MB',
-      color: 'warning',
-    }
+    alert('La imagen no debe exceder 5MB')
     return
   }
 
-  // Crear preview
+  // Leer imagen y abrir modal de crop
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    tempImageSrc.value = e.target?.result
+    showCropperModal.value = true
+  }
+  reader.readAsDataURL(file)
+  
+  // Limpiar input para permitir seleccionar la misma imagen de nuevo
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+const handleCroppedImage = (blob) => {
+  // Guardar el blob para subirlo después
+  croppedImageBlob.value = blob
+  
+  // Crear preview de la imagen recortada
   const reader = new FileReader()
   reader.onload = (e) => {
     avatarPreview.value = e.target?.result
   }
-  reader.readAsDataURL(file)
+  reader.readAsDataURL(blob)
+  
+  // Cerrar modal
+  showCropperModal.value = false
+}
+
+const closeCropperModal = () => {
+  showCropperModal.value = false
+  tempImageSrc.value = ''
 }
 
 const handleSubmit = async () => {
@@ -373,18 +405,17 @@ const resetForm = () => {
 }
 
 const handleSavePhoto = async () => {
-  if (!avatarPreview.value) {
-    sessionStore.snackbar = {
-      show: true,
-      message: 'Por favor selecciona una foto',
-      color: 'warning',
-    }
+  if (!croppedImageBlob.value || !avatarPreview.value) {
+    alert('Por favor selecciona y recorta una foto primero')
     return
   }
 
+  uploadingPhoto.value = true
   loading.value = true
   try {
     const userType = sessionStore.isTeacher ? 'profesor' : 'usuario'
+    
+    // Usar el blob recortado en lugar del base64
     await profileService.updateProfilePhoto(
       sessionStore.userId,
       avatarPreview.value,
@@ -397,25 +428,21 @@ const handleSavePhoto = async () => {
     // Actualizar también en el sessionStore para que se vea en el navbar
     sessionStore.setUserPhoto(avatarPreview.value)
     avatarPreview.value = null
-    sessionStore.snackbar = {
-      show: true,
-      message: 'Foto actualizada exitosamente',
-      color: 'success',
-    }
+    croppedImageBlob.value = null
+    
+    alert('Foto actualizada exitosamente')
   } catch (error) {
-    sessionStore.snackbar = {
-      show: true,
-      message: 'Error al guardar la foto: ' + error.message,
-      color: 'error',
-    }
+    alert('Error al guardar la foto: ' + error.message)
     console.error('Photo save error:', error)
   } finally {
+    uploadingPhoto.value = false
     loading.value = false
   }
 }
 
 const cancelPhotoUpload = () => {
   avatarPreview.value = null
+  croppedImageBlob.value = null
 }
 
 const handlePasswordChange = async () => {
@@ -542,6 +569,13 @@ const resetPasswordForm = () => {
 
 .avatar {
   border: 3px solid rgba(73, 187, 189, 0.2);
+}
+
+.avatar :deep(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .avatar-upload {
