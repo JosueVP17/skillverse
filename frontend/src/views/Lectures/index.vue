@@ -1,6 +1,6 @@
 <template>
-    <v-layout>
-        <v-navigation-drawer v-if="course && lessons && lessons.length > 0" class="sidebar" permanent width="300">
+    <v-layout class="lecture-layout">
+        <v-navigation-drawer v-if="course && lessons && lessons.length > 0" permanent width="360">
             <v-list-item id="drawer-title">
                 <v-list-item-title class="course-heads">{{ course.nombre }}</v-list-item-title>
                 <v-list-item-subtitle class="course-heads">{{ course.categoria }}</v-list-item-subtitle>
@@ -18,7 +18,7 @@
             </v-list-item>
         </v-navigation-drawer>
 
-        <v-main class="bar" style="padding: 0 !important;">
+        <v-main>
             <div v-if="!course" class="loading">
                 <div style="text-align: center;">
                     <p>{{ loadingMessage }}</p>
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <div v-else class="content">
+            <div v-else class="content-wrapper">
                 <div class="rectangle">
                     <p class="learn-about-adobe-XD">{{ lessons[lessonIndex].titulo }}</p>
                     <div class="sub-info">
@@ -188,56 +188,51 @@
     }
 
     .container {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-left: calc(360px - 256px);
-        background: linear-gradient(135deg,white, #97DDDF, #A0D6C1);
-        background-attachment: fixed;
-        padding-top: 50px;
-        padding-bottom: 50px;
+        display: none;
     }
     
     .content {
-        background-color: white;
-        border-radius: 15px;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        box-shadow: 0 0px 10px rgba(0,0,0,0.2);
-        overflow: auto;
-        width: 75%;
-        height: 100%;
+        display: none;
     }
 
     .bar {
-        padding: 0;
-        margin: 0;
-        height: 163px;
-        width: 100%;
-        padding-left: calc(400px - 256px)
+        display: none;
     }
 
     .bar .rectangle {
+        display: none;
+    }
+
+    .rectangle {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
         background-color: #49bbbd;
-        height: 140px;
-        width: 100%;
-        padding: 20px 40px 20px 40px;
+        padding: 40px;
+        min-height: 140px;
     }
 
-    .bar .learn-about-adobe-XD {
+    .content-wrapper {
+        background-color: white;
+        min-height: 100vh;
+        width: 100%;
+    }
+
+    .lecture-layout {
+        min-height: 100vh;
+    }
+
+    .learn-about-adobe-XD {
         color: #ffffff;
         font-family: "Poppins-Regular", Helvetica;
         font-size: 2.1em;
         font-weight: 600;
         letter-spacing: 0;
         line-height: normal;
+        margin: 0;
     }
 
-    .bar .text-wrapper {
+    .text-wrapper {
         color: #ffffff;
         font-family: "Poppins-Regular", Helvetica;
         font-size: 1.2em;
@@ -270,8 +265,11 @@
     }
     
     .sidebar{
-        min-width: 360px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        display: none;
+    }
+
+    .v-navigation-drawer {
+        box-shadow: 2px 0 15px rgba(0,0,0,0.1);
         background-color: white;
         border: none;
     }
