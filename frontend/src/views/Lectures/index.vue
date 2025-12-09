@@ -1,7 +1,22 @@
 <template>
     <div class="bar" style="padding: 0 !important;">
         <div v-if="!course" class="loading">
-            <p>Cargando Leccion...</p>
+            <div style="text-align: center;">
+                <p>{{ loadingMessage }}</p>
+                <p style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
+                <button v-if="errorMessage" @click="goBack" style="margin-top: 20px; padding: 10px 20px; cursor: pointer;">
+                    Volver
+                </button>
+            </div>
+        </div>
+
+        <div v-else-if="!lessons || lessons.length === 0" class="loading" style="color: red;">
+            <div style="text-align: center;">
+                <p>⚠️ No hay lecciones disponibles para este curso</p>
+                <button @click="goBack" style="margin-top: 20px; padding: 10px 20px; cursor: pointer;">
+                    Volver al curso
+                </button>
+            </div>
         </div>
 
         <div v-else class="container">
@@ -65,6 +80,8 @@
     const courseId  = route.params.id
     const course    = ref(null)
     const lessons   = ref([])
+    const loadingMessage = ref('Cargando lección...')
+    const errorMessage = ref('')
     let lessonIndex = ref(0)
 
     // Función para extraer ID de YouTube de cualquier formato
@@ -108,13 +125,34 @@
         uiStore.setTitlePage('Lecciones');
         uiStore.setTabPage('Lecciones');
 
-        const cursoData = await getCurso(courseId)
+        try {
+            console.log('Cargando curso con ID:', courseId)
+            loadingMessage.value = 'Cargando lección...'
+            
+            const cursoData = await getCurso(courseId)
 
-        if (cursoData) {
-            course.value = cursoData
-            lessons.value = cursoData.lecciones || []
+            if (cursoData) {
+                console.log('Curso obtenido:', cursoData)
+                course.value = cursoData
+                lessons.value = cursoData.lecciones || []
+                
+                if (!lessons.value || lessons.value.length === 0) {
+                    console.warn('No hay lecciones disponibles para este curso')
+                    errorMessage.value = 'Este curso no tiene lecciones disponibles'
+                }
+            } else {
+                console.error('No se pudo obtener la información del curso')
+                errorMessage.value = 'No se encontró el curso o no tiene lecciones'
+            }
+        } catch (error) {
+            console.error('Error cargando lecciones:', error)
+            errorMessage.value = 'Error al cargar las lecciones: ' + error.message
         }
     })
+
+    const goBack = () => {
+        router.back()
+    }
 
     // Metodo para Cambiar de Leccion
     const navigateToLesson = (index) => {
