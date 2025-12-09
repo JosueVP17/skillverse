@@ -88,13 +88,6 @@ const router = createRouter({
       path: '/courses/:id/lessons',
       name: 'lectures',
       component: () => import('@/views/Auth/LectureLayout.vue'),
-      children: [
-        {
-          path: '',
-          name: 'LecturePage',
-          component: () => import('@/views/Lectures/index.vue'),
-        },
-      ],
     },
   ],
 })

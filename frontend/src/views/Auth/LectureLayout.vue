@@ -1,14 +1,11 @@
 <template>
-    <v-app>
-        <v-main>
-            <v-container style="padding: 0 !important; margin: 0 !important; min-width: 100% !important;">
-                <router-view />
-            </v-container>
-        </v-main>
-    </v-app>
+    <div class="lecture-layout">
+        <lectures />
+    </div>
 </template>
 
 <script setup>
+import Lectures from '@/views/Lectures/index.vue'
 </script>
 
 <style lang="css" scoped>
@@ -18,6 +15,12 @@
         font-family: "Poppins", sans-serif;
         font-weight: 500;
         font-style: normal;
+    }
+
+    .lecture-layout {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
     }
 
     .poppins-bold {
