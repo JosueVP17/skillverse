@@ -280,6 +280,8 @@ import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { renderStripeProcess } from '@/utils/stripeProcess'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const router = useRouter()
 const sessionStore = useSessionStore()
 
@@ -305,7 +307,7 @@ const total = computed(() => {
 // Methods
 const getCurso = async (id) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/cursos/${id}`)
+    const response = await fetch(`${API_BASE_URL}/cursos/${id}`)
     const data = await response.json()
 
     if (data.ok) {

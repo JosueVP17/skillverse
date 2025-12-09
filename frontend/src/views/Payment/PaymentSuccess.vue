@@ -108,6 +108,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const router = useRouter()
 const route = useRoute()
 const sessionStore = useSessionStore()
@@ -129,7 +131,7 @@ const verifyPayment = async () => {
     console.log('Verificando pago para session_id:', sessionId.value)
 
     const response = await fetch(
-      `http://localhost:5000/api/pagos/verify-session/${sessionId.value}`,
+      `${API_BASE_URL}/pagos/verify-session/${sessionId.value}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -147,7 +149,7 @@ const verifyPayment = async () => {
       console.log('Procesando compra...')
       // Procesar la compra directamente (sin esperar webhook en dev)
       const processResponse = await fetch(
-        `http://localhost:5000/api/pagos/process-purchase/${sessionId.value}`,
+        `${API_BASE_URL}/pagos/process-purchase/${sessionId.value}`,
         {
           method: 'POST',
           headers: {

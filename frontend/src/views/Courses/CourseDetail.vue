@@ -357,6 +357,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import { useUIStore } from '@/stores/ui'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const uiStore = useUIStore()
 const sessionStore = useSessionStore()
 const router = useRouter()
@@ -571,7 +573,7 @@ const getUserPhotoAsync = async (usuarioId) => {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/api/usuarios/foto/${usuarioId}`, {
+    const response = await fetch(`${API_BASE_URL}/usuarios/foto/${usuarioId}`, {
       method: 'GET'
     })
 
@@ -628,7 +630,7 @@ const submitComment = async () => {
   try {
     const token = sessionStore.token
     const response = await fetch(
-      `http://localhost:5000/api/cursos/${courseId}/comentarios`,
+      `${API_BASE_URL}/cursos/${courseId}/comentarios`,
       {
         method: 'POST',
         headers: {

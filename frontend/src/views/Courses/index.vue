@@ -56,6 +56,9 @@ import { useRouter } from 'vue-router'
 
 // STORES
 import { useUIStore } from '@/stores/ui'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const uiStore = useUIStore()
 const router = useRouter()
 
@@ -72,7 +75,7 @@ onMounted(() => {
 onMounted(async () =>{
 try{
     isLoading.value = true
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/cursos`);
+    const res = await fetch(`${API_BASE_URL}/cursos`);
     const data = await res.json();
     cursos.value = data.result;
 

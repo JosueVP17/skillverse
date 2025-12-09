@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 export const useSessionStore = defineStore('session', () => {
   // Estado
   const token = ref(null)
@@ -82,7 +84,7 @@ export const useSessionStore = defineStore('session', () => {
 
   const fetchCart = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/usuarios/${userId.value}/carrito/`, {
+      const response = await fetch(`${API_BASE_URL}/usuarios/${userId.value}/carrito/`, {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
@@ -103,7 +105,7 @@ export const useSessionStore = defineStore('session', () => {
 
   const fetchPurchasedCourses = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/usuarios/${userId.value}/cursos-comprados`, {
+      const response = await fetch(`${API_BASE_URL}/usuarios/${userId.value}/cursos-comprados`, {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
@@ -140,7 +142,7 @@ export const useSessionStore = defineStore('session', () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/usuarios/${userId.value}/carrito/${courseId}`,
+        `${API_BASE_URL}/usuarios/${userId.value}/carrito/${courseId}`,
         {
           method: 'POST',
           headers: {
@@ -171,7 +173,7 @@ export const useSessionStore = defineStore('session', () => {
   const removeFromCart = async (courseId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/usuarios/${userId.value}/carrito/${courseId}`,
+        `${API_BASE_URL}/usuarios/${userId.value}/carrito/${courseId}`,
         {
           method: 'DELETE',
           headers: {
