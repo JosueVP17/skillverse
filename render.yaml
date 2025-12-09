@@ -27,16 +27,16 @@ services:
 
   - type: web
     name: skillverse-frontend
-    env: node
+    env: static
     region: oregon
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
-    startCommand: node server.js
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
-      - key: PORT
-        value: 10000
       - key: VITE_API_URL
         value: https://skillverse-backend.onrender.com/api
-      - key: NODE_ENV
-        value: production
