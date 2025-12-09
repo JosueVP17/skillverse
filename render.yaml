@@ -32,7 +32,7 @@ services:
     plan: free
     rootDir: frontend
     buildCommand: npm run build
-    startCommand: node server.cjs
+    startCommand: node server.js
     envVars:
       - key: VITE_API_URL
         value: https://skillverse-backend.onrender.com/api
