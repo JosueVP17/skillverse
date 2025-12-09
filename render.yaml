@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: skillverse-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        fromBuild: true
+      - key: FIREBASE_PRIVATE_KEY
+        fromBuild: true
+      - key: FIREBASE_CLIENT_EMAIL
+        fromBuild: true
+      - key: FIREBASE_PROJECT_ID
+        fromBuild: true
+      - key: STRIPE_SECRET_KEY
+        fromBuild: true
+      - key: STRIPE_WEBHOOK_SECRET
+        fromBuild: true
+      - key: FRONTEND_URL
+        fromBuild: true
+
+  - type: static_site
+    name: skillverse-frontend
+    buildCommand: npm run build
+    staticPublishPath: dist
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        value: https://skillverse-backend.onrender.com/api
