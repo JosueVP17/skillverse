@@ -4,10 +4,15 @@ export function useFinisherHeader(config) {
   let finisherInstance = null
 
   onMounted(() => {
-    // Esperar a que el DOM esté listo
+    // Esperar a que el DOM esté listo y verificar que el elemento existe
     setTimeout(() => {
-      if (window.FinisherHeader) {
-        finisherInstance = new window.FinisherHeader(config)
+      const finisherElement = document.querySelector('.finisher-header')
+      if (window.FinisherHeader && finisherElement) {
+        try {
+          finisherInstance = new window.FinisherHeader(config)
+        } catch (error) {
+          console.warn('Error al inicializar FinisherHeader:', error.message)
+        }
       }
     }, 100)
   })

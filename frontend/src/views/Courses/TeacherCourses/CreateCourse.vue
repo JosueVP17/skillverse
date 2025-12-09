@@ -136,8 +136,11 @@
               </div>
 
               <div class="form-group">
-                <label>URL de Video (opcional)</label>
-                <input v-model="newLeccion.video" type="url" placeholder="https://..." />
+                <label>URL de Video de YouTube (opcional)</label>
+                <input v-model="newLeccion.video" type="text" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ o https://youtu.be/dQw4w9WgXcQ" />
+                <small style="color: #666; display: block; margin-top: 5px;">
+                  💡 Pega la URL completa de YouTube. Se extrae automáticamente el ID del video.
+                </small>
               </div>
 
               <button type="button" class="btn-add-leccion" @click="addLeccion">
@@ -265,9 +268,15 @@ const addLeccion = () => {
     return
   }
 
+  // Procesar video si existe (extraer ID de YouTube si es necesario)
+  const leccionParaGuardar = { ...newLeccion.value }
+  if (leccionParaGuardar.video) {
+    leccionParaGuardar.video = extractYouTubeId(leccionParaGuardar.video)
+  }
+
   if (editingLeccionIndex.value !== null) {
     // Actualizar lección (index)
-    formData.value.lecciones[editingLeccionIndex.value] = { ...newLeccion.value }
+    formData.value.lecciones[editingLeccionIndex.value] = leccionParaGuardar
     sessionStore.snackbar = {
       show: true,
       message: 'Lección actualizada correctamente',
@@ -276,7 +285,7 @@ const addLeccion = () => {
     editingLeccionIndex.value = null
   } else {
     // Agregar nueva lección
-    formData.value.lecciones.push({ ...newLeccion.value })
+    formData.value.lecciones.push(leccionParaGuardar)
     sessionStore.snackbar = {
       show: true,
       message: 'Lección agregada correctamente',
@@ -291,6 +300,35 @@ const addLeccion = () => {
     imagen: '',
     video: ''
   }
+}
+
+// Función para extraer ID de YouTube de cualquier formato de URL
+const extractYouTubeId = (url) => {
+  if (!url) return ''
+  
+  // Si ya es solo el ID (11 caracteres alphanumericos)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+    return url
+  }
+
+  // Intentar extraer de URL completa
+  try {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+      /^([a-zA-Z0-9_-]{11})$/
+    ]
+
+    for (let pattern of patterns) {
+      const match = url.match(pattern)
+      if (match && match[1]) {
+        return match[1]
+      }
+    }
+  } catch (e) {
+    console.error('Error extrayendo ID de YouTube:', e)
+  }
+
+  return url // Devolver la URL original si no se puede extraer
 }
 
 const removeLeccion = (index) => {

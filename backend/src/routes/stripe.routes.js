@@ -26,6 +26,14 @@ StripeRoutes.get(
     StripeController.verifySession
 )
 
+// Procesar la compra después de verificar el pago (para desarrollo sin webhooks)
+StripeRoutes.post(
+    '/process-purchase/:sessionId',
+    validate(verifySessionSchema, 'params'),
+    verifyToken,
+    StripeController.processPurchase
+)
+
 // Nota: El webhook se maneja directamente en app.js antes del JSON parser
 
 export default StripeRoutes

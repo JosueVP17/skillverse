@@ -36,7 +36,7 @@
 
                 <div class="lesson-video">
                     <iframe
-                        :src="`https://www.youtube.com/embed/${lessons[lessonIndex].video}`"
+                        :src="videoUrl"
                         title="YouTube video player"
                         frameborder="1"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
 
     // STORES
@@ -66,6 +66,42 @@
     const course    = ref(null)
     const lessons   = ref([])
     let lessonIndex = ref(0)
+
+    // Función para extraer ID de YouTube de cualquier formato
+    const extractYouTubeId = (url) => {
+        if (!url) return ''
+        
+        // Si ya es solo el ID (11 caracteres alphanumericos)
+        if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+            return url
+        }
+
+        // Intentar extraer de URL completa
+        try {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+                /^([a-zA-Z0-9_-]{11})$/
+            ]
+
+            for (let pattern of patterns) {
+                const match = url.match(pattern)
+                if (match && match[1]) {
+                    return match[1]
+                }
+            }
+        } catch (e) {
+            console.error('Error extrayendo ID de YouTube:', e)
+        }
+
+        return url // Devolver la URL original si no se puede extraer
+    }
+
+    // Video URL computada que extrae el ID correctamente
+    const videoUrl = computed(() => {
+        if (!lessons.value[lessonIndex.value]?.video) return ''
+        const videoId = extractYouTubeId(lessons.value[lessonIndex.value].video)
+        return `https://www.youtube.com/embed/${videoId}`
+    })
 
     // HOOKS
     onMounted(async () => {

@@ -17,22 +17,22 @@ UsuarioRoutes.post('/logout',
     verifyToken,  
     UsuarioController.logout)
 
-UsuarioRoutes.put('/update/:id',
-    validate(idUsuarioSchema, 'params'), 
-    validate(updateUsuarioSchema), 
-    verifyToken, 
-    UsuarioController.update)
-
-UsuarioRoutes.delete('/delete/:id',
-    validate(idUsuarioSchema,'params'),
+// Rutas específicas ANTES de rutas con parámetros generales
+UsuarioRoutes.get('/profile',
     verifyToken,
-    UsuarioController.delete
+    UsuarioController.getProfile
 )
 
 UsuarioRoutes.get('/:id/carrito',
     validate(idUsuarioSchema, 'params'),
     verifyToken,
     UsuarioController.getCart
+)
+
+UsuarioRoutes.get('/:id/cursos-comprados',
+    validate(idUsuarioSchema, 'params'),
+    verifyToken,
+    UsuarioController.getPurchasedCourses
 )
 
 UsuarioRoutes.post('/:id/carrito/:courseId',
@@ -47,15 +47,16 @@ UsuarioRoutes.delete('/:id/carrito/:courseId',
     UsuarioController.removeFromCartUser
 )
 
-UsuarioRoutes.get('/:id/cursos-comprados',
-    validate(idUsuarioSchema, 'params'),
-    verifyToken,
-    UsuarioController.getPurchasedCourses
-)
+UsuarioRoutes.put('/update/:id',
+    validate(idUsuarioSchema, 'params'), 
+    validate(updateUsuarioSchema), 
+    verifyToken, 
+    UsuarioController.update)
 
-UsuarioRoutes.get('/profile',
+UsuarioRoutes.delete('/delete/:id',
+    validate(idUsuarioSchema,'params'),
     verifyToken,
-    UsuarioController.getProfile
+    UsuarioController.delete
 )
 
 UsuarioRoutes.get('/foto/:id',
@@ -63,6 +64,7 @@ UsuarioRoutes.get('/foto/:id',
     UsuarioController.getUsuarioById
 )
 
+// Esta es la ruta más genérica, debe ir ÚLTIMA
 UsuarioRoutes.get('/:id',
     validate(idUsuarioSchema, 'params'),
     verifyToken,

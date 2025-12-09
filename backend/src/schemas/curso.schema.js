@@ -4,7 +4,7 @@ const baseLeccionSchema = {
     imagen: z.url('La imagen debe ser una URL válida.'),
     titulo: z.string().min(1, 'El título es requerido.'),
     texto: z.string().min(1, 'El texto es requerido.'),
-    video: z.url('El video debe ser una URL válida.').optional()
+    video: z.string().optional() // Acepta cualquier string (URL completa, URL corta, o solo ID)
 }
 
 const baseCursoSchema = {
@@ -56,7 +56,7 @@ export const updateLeccionSchema = z.object({
     imagen: z.url('La imagen debe ser una URL válida.').optional(),
     titulo: z.string().min(1, 'El título es requerido.').optional(),
     texto: z.string().min(1, 'El texto es requerido.').optional(),
-    video: z.url('El video debe ser una URL válida.').optional()
+    video: z.string().optional() // Acepta cualquier string (URL completa, URL corta, o solo ID)
 })
 
 export const createCommentSchema = z.object({
