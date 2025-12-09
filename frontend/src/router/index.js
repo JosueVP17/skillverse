@@ -20,11 +20,6 @@ const router = createRouter({
           component: () => import('@/views/Courses/index.vue'),
         },
         {
-          path: 'courses/:id/lessons',
-          name: 'lectures',
-          component: () => import('@/views/Lectures/index.vue'),
-        },
-        {
           path: 'courses/:id',
           name: 'CourseDetail',
           component: () => import('@/views/Courses/CourseDetail.vue'),
@@ -59,11 +54,6 @@ const router = createRouter({
           name: 'profile',
           component: () => import('@/views/Profile/index.vue'),
         },
-        {
-          path: 'courses/:id/lessons',
-          name: 'lectures',
-          component: () => import('@/views/Lectures/index.vue'),
-        },
       ],
     },
     // Seccion Auth (Login y Register)
@@ -90,6 +80,19 @@ const router = createRouter({
           path: 'teacher-register',
           name: 'teacher-register',
           component: () => import('@/views/Auth/TeacherRegisterForm.vue'),
+        },
+      ],
+    },
+    // Sección de lecciones con layout limpio
+    {
+      path: '/courses/:id/lessons',
+      name: 'lectures',
+      component: () => import('@/views/Auth/LectureLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'LecturePage',
+          component: () => import('@/views/Lectures/index.vue'),
         },
       ],
     },
