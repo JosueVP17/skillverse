@@ -34,6 +34,8 @@ services:
     buildCommand: npm install && npm run build
     startCommand: node server.js
     envVars:
+      - key: PORT
+        value: 10000
       - key: VITE_API_URL
         value: https://skillverse-backend.onrender.com/api
       - key: NODE_ENV
