@@ -31,8 +31,10 @@ services:
     region: oregon
     plan: free
     rootDir: frontend
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     startCommand: node server.js
     envVars:
       - key: VITE_API_URL
         value: https://skillverse-backend.onrender.com/api
+      - key: NODE_ENV
+        value: production
