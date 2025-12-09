@@ -1,6 +1,24 @@
 <template>
     <v-layout>
-        <div class="bar" style="padding: 0 !important;">
+        <v-navigation-drawer v-if="course && lessons && lessons.length > 0" class="sidebar" permanent width="300">
+            <v-list-item id="drawer-title">
+                <v-list-item-title class="course-heads">{{ course.nombre }}</v-list-item-title>
+                <v-list-item-subtitle class="course-heads">{{ course.categoria }}</v-list-item-subtitle>
+                <img :src="course.img" />
+            </v-list-item>
+            <v-list>
+                <v-list-item v-for="(lect, ind) in lessons" :key="ind" @click="navigateToLesson(ind)" :value="ind" class="drawer-btn">
+                    <v-icon icon="mdi-book-open" size="22" style="margin-right: 15px;"></v-icon>
+                    Leccion {{ ind + 1 }}
+                </v-list-item>
+            </v-list>
+            <v-list-item id="return" link @click="returnBack()">
+                <v-icon icon="mdi-home" size="22" style="margin-right: 15px;"></v-icon>
+                Regresar
+            </v-list-item>
+        </v-navigation-drawer>
+
+        <v-main class="bar" style="padding: 0 !important;">
             <div v-if="!course" class="loading">
                 <div style="text-align: center;">
                     <p>{{ loadingMessage }}</p>
@@ -20,48 +38,34 @@
                 </div>
             </div>
 
-            <div v-else class="container">
-                <v-navigation-drawer class="sidebar" permanent>
-                    <v-list-item id="drawer-title">
-                        <v-list-item-title class="course-heads">{{ course.nombre }}</v-list-item-title>
-                        <v-list-item-subtitle class="course-heads">{{ course.categoria }}</v-list-item-subtitle>
-                        <img :src="course.img" />
-                    </v-list-item>
-                    <v-list>
-                        <v-list-item v-for="(lect, ind) in lessons" :key="ind" @click="navigateToLesson(ind)" :value="ind" class="drawer-btn"><v-icon icon="mdi-book-open" size="22" style="margin-right: 15px;"></v-icon>Leccion {{ ind + 1 }}</v-list-item>
-                    </v-list>
-                    <v-list-item id="return" link @click="returnBack()"><v-icon icon="mdi-home" size="22" style="margin-right: 15px;"></v-icon>Regresar</v-list-item>
-                </v-navigation-drawer>
-
-                <div class="content">
-                    <div class="rectangle">
-                        <p class="learn-about-adobe-XD">{{ lessons[lessonIndex].titulo }}</p>
-                        <div class="sub-info">
-                            <div class="text-wrapper">{{ course.nombre }}</div>
-                            <div class="length">
-                                <div class="div">Leccion {{ lessonIndex + 1 }}</div>
-                            </div>
+            <div v-else class="content">
+                <div class="rectangle">
+                    <p class="learn-about-adobe-XD">{{ lessons[lessonIndex].titulo }}</p>
+                    <div class="sub-info">
+                        <div class="text-wrapper">{{ course.nombre }}</div>
+                        <div class="length">
+                            <div class="div">Leccion {{ lessonIndex + 1 }}</div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="lesson-image">
-                        <img :src=lessons[lessonIndex].imagen alt="Imagen de Leccion">
-                    </div>
+                <div class="lesson-image">
+                    <img :src=lessons[lessonIndex].imagen alt="Imagen de Leccion">
+                </div>
 
-                    <div class="lesson-text">{{ lessons[lessonIndex].texto }}</div>
+                <div class="lesson-text">{{ lessons[lessonIndex].texto }}</div>
 
-                    <div class="lesson-video">
-                        <iframe
-                            :src="videoUrl"
-                            title="YouTube video player"
-                            frameborder="1"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
-                    </div>
+                <div class="lesson-video">
+                    <iframe
+                        :src="videoUrl"
+                        title="YouTube video player"
+                        frameborder="1"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
-        </div>
+        </v-main>
     </v-layout>
 </template>
 
