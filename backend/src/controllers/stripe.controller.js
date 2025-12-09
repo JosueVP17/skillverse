@@ -6,23 +6,23 @@ const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 // Helper para procesar la compra
 const processPurchaseHelper = async (userId, courseIds) => {
-    console.log('🛒 Processing courses:', courseIds)
+    console.log('Processing courses:', courseIds)
 
     for (let i = 0; i < courseIds.length; i++) {
         const courseId = courseIds[i]
         
         try {
-            console.log(`➕ Adding course ${courseId} to purchased courses for user ${userId}`)
+            console.log(`Adding course ${courseId} to purchased courses for user ${userId}`)
             // Primero agregar a cursos comprados
             await UsuarioService.buyCourse(userId, courseId)
             
-            console.log(`➖ Removing course ${courseId} from cart for user ${userId}`)
+            console.log(`Removing course ${courseId} from cart for user ${userId}`)
             // Luego remover del carrito
             await UsuarioService.removeFromCart(userId, courseId)
             
-            console.log(`✅ Course ${courseId} processed successfully`)
+            console.log(`Course ${courseId} processed successfully`)
         } catch (courseError) {
-            console.error(`❌ Error procesando curso ${courseId}:`, courseError.message)
+            console.error(`Error procesando curso ${courseId}:`, courseError.message)
         }
     }
 }
@@ -98,23 +98,23 @@ export default {
             // Verificar que el webhook viene de Stripe
             event = stripeClient.webhooks.constructEvent(req.body, sig, endpointSecret)
         } catch (err) {
-            console.error('❌ Webhook signature verification failed:', err.message)
+            console.error('Webhook signature verification failed:', err.message)
             return res.status(400).send(`Webhook Error: ${err.message}`)
         }
 
-        console.log('✅ Webhook received:', event.type)
+        console.log('Webhook received:', event.type)
 
         // Manejar el evento
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object
-            console.log('📦 Session completed:', session.id)
+            console.log('Session completed:', session.id)
 
             try {
                 // Extraer información del usuario y cursos
                 const userId = session.metadata?.userId
                 const courseIdsString = session.metadata?.courseIds
 
-                console.log('📊 Metadata received:', { userId, courseIdsString })
+                console.log('Metadata received:', { userId, courseIdsString })
 
                 // Verificar que tenemos datos válidos
                 if (!userId) {
@@ -134,14 +134,14 @@ export default {
                 // Usar el helper para procesar la compra
                 await processPurchaseHelper(userId, courseIds)
                 
-                console.log('✅ Purchase processed successfully')
+                console.log('Purchase processed successfully')
             } catch (err) {
-                console.error('❌ Error procesando compra:', err.message)
+                console.error('Error procesando compra:', err.message)
                 console.error('Stack:', err.stack)
                 // No retornar error para que Stripe no reintente
             }
         } else {
-            console.log('⏭️ Evento ignorado:', event.type)
+            console.log('Evento ignorado:', event.type)
         }
 
         // Responder a Stripe que recibimos el webhook
@@ -169,7 +169,7 @@ export default {
             const { sessionId } = req.params
             const userId = req.usuario.id
 
-            console.log('📦 Processing purchase for session:', sessionId)
+            console.log('Processing purchase for session:', sessionId)
 
             // Obtener la sesión de Stripe
             const session = await stripeClient.checkout.sessions.retrieve(sessionId)
@@ -197,10 +197,10 @@ export default {
             // Procesar la compra
             await processPurchaseHelper(userId, courseIds)
 
-            console.log('✅ Purchase processed successfully')
+            console.log('Purchase processed successfully')
             return res.json({ ok: true, message: 'Compra procesada exitosamente', courses: courseIds })
         } catch (e) {
-            console.error('❌ Error procesando compra:', e)
+            console.error('Error procesando compra:', e)
             res.status(400).json({ ok: false, message: e.message })
         }
     }

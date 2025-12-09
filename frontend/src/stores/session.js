@@ -327,20 +327,20 @@ export const useSessionStore = defineStore('session', () => {
   // Recargar carrito y cursos comprados después de una compra
   const refreshUserData = async () => {
     try {
-      console.log('🔄 refreshUserData called, isStudent:', isStudent.value)
+      console.log('refreshUserData called, isStudent:', isStudent.value)
       if (isStudent.value) {
-        console.log('📥 Fetching cart...')
+        console.log('Fetching cart...')
         await fetchCart()
-        console.log('✅ Cart fetched:', cart.value)
+        console.log('Cart fetched:', cart.value)
         
-        console.log('📥 Fetching purchased courses...')
+        console.log('Fetching purchased courses...')
         await fetchPurchasedCourses()
-        console.log('✅ Purchased courses fetched:', purchasedCourses.value)
+        console.log('Purchased courses fetched:', purchasedCourses.value)
       } else {
-        console.log('⚠️ User is not a student, skipping refresh')
+        console.log('User is not a student, skipping refresh')
       }
     } catch (error) {
-      console.error('❌ Error in refreshUserData:', error)
+      console.error('Error in refreshUserData:', error)
     }
   }
 

@@ -126,7 +126,7 @@ const verifyPayment = async () => {
       throw new Error('No se encontró ID de sesión')
     }
 
-    console.log('🔍 Verificando pago para session_id:', sessionId.value)
+    console.log('Verificando pago para session_id:', sessionId.value)
 
     const response = await fetch(
       `http://localhost:5000/api/pagos/verify-session/${sessionId.value}`,
@@ -138,13 +138,13 @@ const verifyPayment = async () => {
     )
 
     const data = await response.json()
-    console.log('📋 Verificación de pago:', data)
+    console.log('Verificación de pago:', data)
 
     if (data.ok && data.paid) {
-      console.log('✅ Pago verificado exitosamente')
+      console.log('Pago verificado exitosamente')
       success.value = true
       
-      console.log('⏳ Procesando compra...')
+      console.log('Procesando compra...')
       // Procesar la compra directamente (sin esperar webhook en dev)
       const processResponse = await fetch(
         `http://localhost:5000/api/pagos/process-purchase/${sessionId.value}`,
@@ -158,18 +158,18 @@ const verifyPayment = async () => {
       )
       
       const processData = await processResponse.json()
-      console.log('📦 Respuesta de procesamiento:', processData)
+      console.log('Respuesta de procesamiento:', processData)
       
-      console.log('🔄 Recargando datos del usuario (carrito y cursos comprados)...')
+      console.log('Recargando datos del usuario (carrito y cursos comprados)...')
       // Recargar carrito y cursos comprados del usuario
       await sessionStore.refreshUserData()
-      console.log('✅ Datos del usuario recargados')
+      console.log('Datos del usuario recargados')
       
     } else {
       throw new Error('El pago no se ha completado')
     }
   } catch (error) {
-    console.error('❌ Error verificando pago:', error)
+    console.error('Error verificando pago:', error)
     errorMessage.value = error.message || 'Hubo un problema al verificar tu pago'
     success.value = false
   } finally {
