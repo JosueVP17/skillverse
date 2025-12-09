@@ -2,7 +2,7 @@ const VITE_API_URL = import.meta.env.VITE_API_URL
 
 export const getCurso = async (id) => {
   try {
-    const response = await fetch(`${VITE_API_URL}/api/cursos/${id}`)
+    const response = await fetch(`${VITE_API_URL}/cursos/${id}`)
     const data = await response.json()
 
     if (data.ok) {
@@ -15,7 +15,7 @@ export const getCurso = async (id) => {
 
 export const getProfesor = async (id) => {
   try {
-    const response = await fetch(`${VITE_API_URL}/api/profesores/${id}`)
+    const response = await fetch(`${VITE_API_URL}/profesores/${id}`)
     const data = await response.json()
 
     if (data.ok) {

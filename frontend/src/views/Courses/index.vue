@@ -72,7 +72,7 @@ onMounted(() => {
 onMounted(async () =>{
 try{
     isLoading.value = true
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cursos`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/cursos`);
     const data = await res.json();
     cursos.value = data.result;
 

@@ -10,7 +10,7 @@ export const renderStripeProcess = async (userId) => {
       throw new Error('Debes iniciar sesión para realizar el pago')
     }
 
-    const response = await fetch(`${VITE_API_URL}/api/pagos/checkout/${userId}`, {
+    const response = await fetch(`${VITE_API_URL}/pagos/checkout/${userId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
