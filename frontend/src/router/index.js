@@ -43,6 +43,8 @@ const router = createRouter({
           path: 'pago-cancelado',
           name: 'payment-cancelled',
           component: () => import('@/views/Payment/PaymentCancelled.vue'),
+        },
+        {
           path: 'teacher-courses',
           name: 'teacher-courses',
           component: () => import('@/views/Courses/TeacherCourses/index.vue'),
@@ -51,6 +53,11 @@ const router = createRouter({
           path: 'profile',
           name: 'profile',
           component: () => import('@/views/Profile/index.vue'),
+        },
+        {
+          path: 'courses/:id/lessons',
+          name: 'lectures',
+          component: () => import('@/views/Lectures/index.vue'),
         },
       ],
     },
@@ -83,8 +90,8 @@ const router = createRouter({
     },
     // Sección de lecciones
     {
-      path: '/courses/:id/lessons',
-      name: 'lectures',
+      path: '/auth/lectures',
+      name: 'lectures-auth',
       component: () => import('@/views/Auth/LectureLayout.vue'),
       children: [
         {
