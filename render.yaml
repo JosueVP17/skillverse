@@ -25,11 +25,14 @@ services:
       - key: FRONTEND_URL
         fromBuild: true
 
-  - type: static_site
+  - type: web
     name: skillverse-frontend
-    buildCommand: npm run build
-    staticPublishPath: dist
+    env: node
+    region: oregon
+    plan: free
     rootDir: frontend
+    buildCommand: npm run build
+    startCommand: node server.cjs
     envVars:
       - key: VITE_API_URL
         value: https://skillverse-backend.onrender.com/api
